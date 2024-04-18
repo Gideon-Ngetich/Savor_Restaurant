@@ -25,7 +25,7 @@ const Menu = () => {
   useEffect(() => {
     // axios.get('https://promise-website.onrender.com/api/food-category')
     // axios.get('http://localhost:5500/api/food-category')
-    axios.get('https://savor-restaurant-1.onrender.com:5500/api/food-category')
+    axios.get('https://savor-restaurant-1.onrender.com/api/food-category')
       .then(response => {
         const filteredCategories = response.data.filter(category => category.name !== 'Lunch');
         const lunchCategory = response.data.filter(category => category.name === 'Lunch');
