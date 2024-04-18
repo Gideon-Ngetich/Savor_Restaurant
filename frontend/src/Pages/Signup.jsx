@@ -69,7 +69,7 @@ const Signup = () => {
                 return;
             }
 
-            const response = await axios.post('http://localhost:5500/api/users', { userName, email, phone, location, password });
+            const response = await axios.post('https://savor-restaurant-1.onrender.com:5500/api/users', { userName, email, phone, location, password });
 
             if (!response.ok) {
                 const data = await response.json();

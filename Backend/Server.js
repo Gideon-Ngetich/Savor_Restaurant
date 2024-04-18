@@ -26,7 +26,7 @@ const JWT_SECRET_KEY = cryptoRandomString({ length: 32, type: 'base64' });
 // app.use(cors({credentials:true, origin:'https://promise-website.onrender.com'}));
 app.use(cors({
     credentials: true,
-    origin: 'http://localhost:5173',
+    origin: 'https://savor-restaurant-frontend.vercel.app',
 }));
 
 app.use(bodyParser.json());
