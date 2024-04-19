@@ -6,8 +6,8 @@ import image12 from '../assets/image-12.jpg'
 function ImgCarousel() {
   return (
     <>
-      <div className='w-full h-12 bg-yellow-500 flex justify-center items-center'>
-        <p className='text-white font-bold text-md'>Exciting Announcement Coming Soon! 🚀 Stay tuned as we prepare to launch our new online ordering feature. Get ready to experience seamless convenience like never before!</p>
+      <div className='w-full h-20 bg-yellow-500  flex justify-center items-center text-sm lg:text-xl'>
+        <p className='text-white font-bold text-sm py-5'>Exciting Announcement Coming Soon! 🚀 Stay tuned as we prepare to launch our new online ordering feature. Get ready to experience seamless convenience like never before!</p>
       </div>
       <div className="relative h-screen overflow-hidden ">
       <div className="absolute top-1/2 left-1/2 z-10 transform -translate-x-1/2 -translate-y-1/2 text-white text-center">

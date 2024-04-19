@@ -20,8 +20,10 @@ const Contacts = () => {
   return (
     <>
       <TopNav />
-      <div className='bg-cover bg-fixed h-96 w-screen flex justify-center items-center overflow-hidden' style={{ backgroundImage: `url(${langingBackground})` }}>
-        <p className='text-5xl lg:text-6xl font-extrabold text-white'>CONTACT</p>
+      <div className='bg-cover bg-fixed h-96 w-screen flex justify-center items-center overflow-hidden' style={{ backgroundImage: `url('https://www.thechurch.ie/wp-content/uploads/2022/02/1-1170x780.jpg')` }}>
+      <p className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white">
+            CONTACT US
+          </p>
       </div>
 
       <div className='py-20 px-30'>
