@@ -11,26 +11,45 @@ import { useSnackbar } from 'notistack';
 const Cart = () => {
 
     const [cartItems, setCartItems] = useState([]);
-    const {enqueSnackbar} = useSnackbar()
+    const [totalItems, setTotalItems] = useState(0);
+
+    // const {enqueSnackbar} = useSnackbar()
 
 
     useEffect(() => {
         const fetchCartItems = async () => {
             try {
                 const userId = localStorage.getItem('u');
-                if (!userId) {
-                    throw new Error('User Id not found in local storage');
-                }
-                const response = await axios.get(`http://localhost:5500/api/cart/${userId}`);
-                setCartItems(response.data); // Ensure cartItems is initialized with an empty array if undefined
+
+                const response = await axios.post('http://localhost:5500/api/cart/removeDuplicates', {
+                    userId: userId
+                });
+
+                // Log response data for debugging
+                console.log(response.data);
+
+                // Fetch updated cart items after successful response
+                const updatedCartItems = await fetchUpdatedCartItems(userId);
+                setCartItems(updatedCartItems);
             } catch (error) {
-                console.error('Error fetching cart items:', error.message);
+                console.error('Error removing duplicates and updating quantity:', error);
+                // Handle error if needed
             }
         };
 
         fetchCartItems();
-    }, []);
+    }, []); // Empty dependency array ensures the effect runs only once when the component mounts
 
+    const fetchUpdatedCartItems = async (userId) => {
+        try {
+            // Fetch cart items for the user after updating quantities
+            const response = await axios.get(`http://localhost:5500/api/cart/${userId}`);
+            return response.data;
+        } catch (error) {
+            console.error('Error fetching updated cart items:', error);
+            return []; // Return empty array in case of error
+        }
+    };
     const handleDecreaseQuantity = async (itemId, index) => {
         
         try {
@@ -81,6 +100,26 @@ const Cart = () => {
         }
     };
     
+    const CalculateTotal = (price, quantity) =>{
+        return quantity * price
+    }
+
+    const calculateSubtotal = () => {
+        return cartItems.reduce((total, item) => total + CalculateTotal(item.quantity, item.price), 0);
+    };
+
+    const calculateGrandTotal = () => { 
+        const shippingFee = 50
+        const grandTotal = calculateSubtotal() + shippingFee
+        return grandTotal
+    }
+
+    useEffect(() => {
+        // Calculate total quantity of all items in the cart
+        const total = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+        setTotalItems(total);
+    }, [cartItems]);
+
 
     return (
         <>
@@ -118,7 +157,7 @@ const Cart = () => {
                                             </span>
                                         </Table.Cell>
                                         <Table.Cell>KES {item.price}</Table.Cell>
-                                        <Table.Cell>KES {item.total}</Table.Cell>
+                                        <Table.Cell>KES {CalculateTotal(item.price, item.quantity)}</Table.Cell>
                                         <Table.Cell>
                                             <button onClick={() => handleRemoveItem(item._id)} className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
                                                 Remove
@@ -137,7 +176,7 @@ const Cart = () => {
                     <div className='flex flex-col gap-5'>
                         <span className='flex justify-between text-xl text-white'>
                             <span>Subtotal</span>
-                            <span>KES 200</span>
+                            <span>KES {calculateSubtotal()}</span>
                         </span>
                         <span className='flex justify-between text-lg'>
                             <span>Shipping Fee</span>
@@ -145,7 +184,7 @@ const Cart = () => {
                         </span>
                         <span className='flex justify-between text-2xl text-white border-y p-3'>
                             <span>Grand Total</span>
-                            <span>KES 250</span>
+                            <span>KES {calculateGrandTotal()}</span>
                         </span>
                         <span className='flex justify-center items-center'>
                             <button className='bg-blue-500 w-40 h-10 text-black hover:bg-blue-700 font-bold text-lg duration-100 ease-in'>Checkout</button>

@@ -26,7 +26,8 @@ const JWT_SECRET_KEY = cryptoRandomString({ length: 32, type: 'base64' });
 // app.use(cors({credentials:true, origin:'https://promise-website.onrender.com'}));
 app.use(cors({
     credentials: true,
-    origin: 'https://savor-restaurant.vercel.app',
+    // origin: 'https://savor-restaurant.vercel.app',
+    origin: 'http://localhost:5173'
 }));
 
 app.use(bodyParser.json());
@@ -176,10 +177,10 @@ app.post('/api/login', async (req, res) => {
         if (!isValidPassword) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
-        const accessToken = jwt.sign({ userId: user._id, userName: user.userName, location: user.location, phone: user.phone, email:user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
+        const accessToken = jwt.sign({ userId: user._id, userName: user.userName, location: user.location, phone: user.phone, email: user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
         const refreshToken = jwt.sign({}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
         res.cookie('accessToken', accessToken, { httpOnly: true });
-        
+
         res.cookie('refreshToken', refreshToken, { httpOnly: true })
         res.status(200).json({ message: 'login successful', accessToken, userId: user._id })
     } catch (error) {
@@ -224,14 +225,27 @@ app.post('/api/refreshToken', (req, res) => {
 // });
 app.get('/api/protected', verifyToken, (req, res) => {
     res.json({ message: 'Access granted', userId: req.userId, accessToken: req.cookies.accessToken });
-  });
+});
 
-app.get('/cart', verifyToken, (req,res) =>{
-    const {userId, userName, phone, email} = req.user
-    res.render('cart',{userId, userName,phone,email} )
+
+const blacklist = new Set();
+app.post('/api/logout', (req, res) => {
+    const token = req.cookies.accessToken;
+    
+    if (token) {
+        blacklist.add(token);
+    }
+    res.clearCookie('accessToken');
+    res.clearCookie('refreshToken');
+
+    res.status(200).json({ message: 'Logged out successfully' });
+});
+
+app.get('/cart', verifyToken, (req, res) => {
+    const { userId, userName, phone, email } = req.user
+    res.render('cart', { userId, userName, phone, email })
 })
 
-// Set up multer storage configuration
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
@@ -240,7 +254,7 @@ app.post('/api/Gallery', upload.single('image'), async (req, res) => {
     try {
         // Get the category and file details from the request
         const { category } = req.body;
-        
+
         // Ensure that category and file buffer are present
         if (!category || !req.file.buffer) {
             return res.status(400).send('Category and image are required');
@@ -276,13 +290,13 @@ app.post('/api/Gallery', upload.single('image'), async (req, res) => {
 
 // async function retrieveImagesFromDatabase(category) {
 //     let query = {};
-  
+
 //     if (category !== 'All Photos') {
 //       query.category = category;
 //     }
-  
+
 //     const images = await ImageModel.find(query);
-  
+
 //     return images.map((image) => ({
 //       category: image.category,
 //       data: image.data ? image.data.toString('base64') : null,
@@ -304,25 +318,25 @@ app.get('/api/Gallery', async (req, res) => {
 //Function to retrieve images from the database based on the category
 async function retrieveImagesFromDatabase(category) {
     try {
-      let query = {};
-      if (category && category !== 'All Photos') {
-        query.category = category;
-      }
-      const images = await Gallery.find(query);
-  
-      return images.map((image) => ({
-        category: image.category,
-        src: image.data ? `data:image/jpeg;base64,${image.data.toString('base64')}` : null,
-      }));
+        let query = {};
+        if (category && category !== 'All Photos') {
+            query.category = category;
+        }
+        const images = await Gallery.find(query);
+
+        return images.map((image) => ({
+            category: image.category,
+            src: image.data ? `data:image/jpeg;base64,${image.data.toString('base64')}` : null,
+        }));
     } catch (error) {
-      console.error('Error retrieving images from database:', error);
-      return [];
+        console.error('Error retrieving images from database:', error);
+        return [];
     }
-  }
-  
-app.post('/api/cart/add', async(req,res) =>{
-    try{
-        const {userId, foodName, price, quantity} = req.body;
+}
+
+app.post('/api/cart/add', async (req, res) => {
+    try {
+        const { userId, foodName, price, quantity } = req.body;
 
         const cartItem = new Cart({
             userId,
@@ -332,11 +346,11 @@ app.post('/api/cart/add', async(req,res) =>{
         })
 
         await cartItem.save();
-        res.status(201).json({message: 'Item added successfully'})
+        res.status(201).json({ message: 'Item added successfully' })
     }
-    catch(err){
+    catch (err) {
         console.error(err)
-        res.status(500).json({message: 'Internal server error'})
+        res.status(500).json({ message: 'Internal server error' })
     }
 })
 
@@ -364,17 +378,17 @@ app.post('/api/cart/updateQuantity', async (req, res) => {
 });
 
 
-app.get('/api/cart/:userId', async(req,res) =>{
-    try{
+app.get('/api/cart/:userId', async (req, res) => {
+    try {
         const userId = req.params.userId
 
-        const cartItems = await Cart.find({userId});
+        const cartItems = await Cart.find({ userId });
         res.json(cartItems)
         // res.status(201).json({message: 'Cart items retrieved successfully'})
     }
-    catch(err){
+    catch (err) {
         console.error(err)
-        res.status(500).json({message:"Internal server error"})
+        res.status(500).json({ message: "Internal server error" })
     }
 })
 
@@ -413,6 +427,53 @@ app.delete('/api/cart/removeItem/:itemId', async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
+app.post('/api/cart/removeDuplicates', async (req, res) => {
+    try {
+        const { userId } = req.body;
+
+        // Find all cart items for the user
+        const cartItems = await Cart.find({ userId });
+
+        // Create a map to track unique items and their quantities
+        const itemMap = new Map();
+
+        // Iterate through cart items to remove duplicates and update quantities
+        cartItems.forEach(item => {
+            if (itemMap.has(item.foodName)) {
+                // Increment quantity for existing item
+                itemMap.get(item.foodName).quantity += item.quantity;
+            } else {
+                // Add new item to map
+                itemMap.set(item.foodName, {
+                    quantity: item.quantity,
+                    price: item.price
+                });
+            }
+        });
+
+        // Clear existing cart items for the user
+        await Cart.deleteMany({ userId });
+
+        // Insert updated cart items into the database
+        const updatedCartItems = [];
+        for (const [foodName, { quantity, price }] of itemMap.entries()) {
+            updatedCartItems.push({
+                userId,
+                foodName,
+                quantity,
+                price
+            });
+        }
+        await Cart.insertMany(updatedCartItems);
+
+        res.status(200).json({ message: 'Duplicates removed and quantities updated successfully' });
+    } catch (error) {
+        console.error('Error removing duplicates and updating quantity:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
 
 
 export default JWT_SECRET_KEY
