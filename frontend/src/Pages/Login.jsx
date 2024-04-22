@@ -46,8 +46,11 @@ const Login = () => {
       enqueueSnackbar('Login Successful', {variant: 'success'})
       console.log(response.data);
 
-      const token = response.data.token;
-      console.log("JWT TOKEN: ",token);
+      if(response.status === 200){
+        const{accessToken: accesstoken, userId: userid} = response.data
+        localStorage.setItem('a', accesstoken)
+        localStorage.setItem('u', userid)
+      }
       setEmail('');
       setPassword('')
       navigateTo('/');

@@ -2,7 +2,7 @@ import express from "express"
 import mongoose from 'mongoose'
 import cors from 'cors'
 import { PORT, mongoDBURL } from './Config.js'
-import { Reservation, Category, Food, User, Gallery } from "./Models/Schema.js"
+import { Reservation, Category, Food, User, Gallery, Cart } from "./Models/Schema.js"
 import bodyParser from "body-parser"
 import dotenv from 'dotenv'
 dotenv.config()
@@ -179,8 +179,9 @@ app.post('/api/login', async (req, res) => {
         const accessToken = jwt.sign({ userId: user._id, userName: user.userName, location: user.location, phone: user.phone, email:user.email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '15m' });
         const refreshToken = jwt.sign({}, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '7d' });
         res.cookie('accessToken', accessToken, { httpOnly: true });
+        
         res.cookie('refreshToken', refreshToken, { httpOnly: true })
-        res.status(200).json({ message: 'login successful' })
+        res.status(200).json({ message: 'login successful', accessToken, userId: user._id })
     } catch (error) {
         res.status(500).json({ message: "Error logging in" });
     }
@@ -217,13 +218,13 @@ app.post('/api/refreshToken', (req, res) => {
 
 })
 
+// app.get('/api/protected', verifyToken, (req, res) => {
+//     // const accessToken = req.cookies.accessToken.
+//     res.json({ message: 'Access granted', userId: req.userId });
+// });
 app.get('/api/protected', verifyToken, (req, res) => {
-    // const accessToken = req.cookies.accessToken.
-    if(req.userId){
-        return res.redirect('/cart')
-    }
-    res.json({ message: 'Access granted', userId: req.userId });
-});
+    res.json({ message: 'Access granted', userId: req.userId, accessToken: req.cookies.accessToken });
+  });
 
 app.get('/cart', verifyToken, (req,res) =>{
     const {userId, userName, phone, email} = req.user
@@ -319,11 +320,99 @@ async function retrieveImagesFromDatabase(category) {
     }
   }
   
+app.post('/api/cart/add', async(req,res) =>{
+    try{
+        const {userId, foodName, price, quantity} = req.body;
+
+        const cartItem = new Cart({
+            userId,
+            foodName,
+            quantity,
+            price
+        })
+
+        await cartItem.save();
+        res.status(201).json({message: 'Item added successfully'})
+    }
+    catch(err){
+        console.error(err)
+        res.status(500).json({message: 'Internal server error'})
+    }
+})
+
+// POST request to update item quantity in the cart
+app.post('/api/cart/updateQuantity', async (req, res) => {
+    try {
+        const { userId, foodName, quantity } = req.body;
+
+        // Find the cart item for the given userId and foodName
+        let cartItem = await Cart.findOne({ userId, foodName });
+
+        if (!cartItem) {
+            return res.status(404).json({ message: 'Item not found in the cart' });
+        }
+
+        // Update the quantity of the cart item
+        cartItem.quantity = quantity;
+        await cartItem.save();
+
+        res.json({ message: 'Item quantity updated successfully' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
 
 
+app.get('/api/cart/:userId', async(req,res) =>{
+    try{
+        const userId = req.params.userId
 
+        const cartItems = await Cart.find({userId});
+        res.json(cartItems)
+        // res.status(201).json({message: 'Cart items retrieved successfully'})
+    }
+    catch(err){
+        console.error(err)
+        res.status(500).json({message:"Internal server error"})
+    }
+})
 
+app.post('/api/cart/Quantity', async (req, res) => {
+    try {
+        const { itemId, quantity } = req.body;
 
+        // Find the cart item by its ID and update its quantity
+        const updatedCartItem = await Cart.findByIdAndUpdate(itemId, { quantity }, { new: true });
+
+        if (!updatedCartItem) {
+            return res.status(404).json({ message: "Cart item not found" });
+        }
+
+        res.status(200).json({ message: "Cart item quantity updated successfully", updatedCartItem });
+    } catch (error) {
+        console.error('Error updating cart item quantity:', error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.delete('/api/cart/removeItem/:itemId', async (req, res) => {
+    try {
+        const itemId = req.params.itemId;
+
+        // Find the cart item by its ID and remove it from the database
+        const deletedCartItem = await Cart.findByIdAndDelete(itemId);
+
+        if (!deletedCartItem) {
+            return res.status(404).json({ message: "Cart item not found" });
+        }
+
+        res.status(200).json({ message: "Cart item removed successfully" });
+    } catch (error) {
+        console.error('Error removing cart item:', error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
 
 
 export default JWT_SECRET_KEY
