@@ -3,7 +3,7 @@ import axios from 'axios';
 import TopNav from '../Components/Navbar';
 
 const GalleryBackground = () => {
-  const categories = ['All Photos', 'Food', 'Events','Interior','VIP Guests'];
+  const categories = ['All Photos', 'Food', 'Events','Interior','Moments'];
   const [currentCategory, setCurrentCategory] = useState('All Photos');
   const [images, setImages] = useState([]);
 
@@ -12,11 +12,11 @@ const GalleryBackground = () => {
       try {
         let response;
         if (currentCategory === 'All Photos') {
-          response = await axios.get('http://localhost:5500/api/Gallery');
+          response = await axios.get('https://savor-restaurant-1.onrender.com/api/Gallery');
         } else if(currentCategory === 'VIP Guests'){
-          response = await axios.get(`http://localhost:5500/api/Gallery?category={VIP}`)
+          response = await axios.get('https://savor-restaurant-1.onrender.com/api/Gallery?category={VIP}')
         }else {
-          response = await axios.get(`hhttp://localhost:5500/api/Gallery?category=${currentCategory}`);
+          response = await axios.get('https://savor-restaurant-1.onrender.com/api/Gallery?category=${currentCategory}');
         }
         setImages(response.data);
       } catch (error) {
@@ -38,11 +38,13 @@ const GalleryBackground = () => {
       <div
         className="bg-cover bg-center sm:bg-fixed h-[400px] flex items-center justify-center"
         style={{
-          backgroundImage: `url('https://www.foodiesfeed.com/wp-content/uploads/2023/06/pouring-honey-on-pancakes.jpg')`,
+          backgroundImage: `url('https://kotart.in/cdn/shop/products/Kotart-Restaurant-Gallery-Wall-Art-Frame-Combo-Set-of-8-5.jpg?v=1697547651&width=1445')`,
         }}
       >
         <div className="text-white text-center">
-          <h1 className="text-5xl font-bold">Gallery</h1>
+        <p className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white">
+            GALLERY
+          </p>
         </div>
       </div>
 

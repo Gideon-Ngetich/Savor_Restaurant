@@ -51,7 +51,7 @@ const Home = () => {
                     <span className='flex flex-col justify-center items-center my-4 lg:w-3/4 xl:w-1/2 p-5'>
                         <p style={{ fontFamily: 'Signika', fontSize: '20px' }}>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Cupiditate sapiente harum sunt deleniti sequi sed maiores ipsum consequatur quisquam tempore, alias dicta quo quos facere fugit deserunt voluptates! Nesciunt, suscipit corporis fugiat quas voluptas magnam quisquam dignissimos ut doloribus cumque consequatur fugit facere cupiditate illum molestiae, dolorem modi eveniet molestias.</p>
                         <span className='flex flex-row justify-center p-5  items-center text-blue-500 hover:text-blue-900 transition-all'>
-                            <a className='text-xl' href="">Our Story</a>
+                            <a className='text-xl' href={'/about'}>Our Story</a>
                             <MdOutlineArrowRightAlt className='text-3xl' />
                         </span>
                     </span>
@@ -79,7 +79,7 @@ const Home = () => {
                             <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quasi nulla praesentium itaque reprehenderit, iusto beatae mollitia, porro quae aspernatur temporibus enim deserunt corrupti odit ipsam, velit eius eum. Ipsa, facilis!</p>
                         </span>
                         <span className='flex justify-center items-center gap-3 m-10 hover:text-blue-500'>
-                            <a href="">LEARN MORE</a>
+                            <a href={'/about'}>LEARN MORE</a>
                             <MdOutlineArrowRightAlt className='text-xl' />
                         </span>
                     </span>
@@ -98,7 +98,7 @@ const Home = () => {
                             <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quasi nulla praesentium itaque reprehenderit, iusto beatae mollitia, porro quae aspernatur temporibus enim deserunt corrupti odit ipsam, velit eius eum. Ipsa, facilis!</p>
                         </span>
                         <span className='flex justify-center items-center gap-3 m-10 hover:text-blue-500'>
-                            <a href="">LEARN MORE</a>
+                            <a href={'/about'}>LEARN MORE</a>
                             <MdOutlineArrowRightAlt className='text-xl' />
                         </span>
                     </span>
@@ -116,7 +116,7 @@ const Home = () => {
                             <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quasi nulla praesentium itaque reprehenderit, iusto beatae mollitia, porro quae aspernatur temporibus enim deserunt corrupti odit ipsam, velit eius eum. Ipsa, facilis!</p>
                         </span>
                         <span className='flex justify-center items-center gap-3 m-10 hover:text-blue-500'>
-                            <a href="">LEARN MORE</a>
+                            <a href={'/about'}>LEARN MORE</a>
                             <MdOutlineArrowRightAlt className='text-xl' />
                         </span>
                     </span>
@@ -130,33 +130,33 @@ const Home = () => {
                 <div className="flex flex-col lg:grid grid-cols-3 grid-rows-2 gap-4 m-10 overflow-hidden">
                     <div className="row-span-2 overflow-hidden flex justify-center items-center relative">
                         <img className='h-full w-full transform transition-transform duration-500 hover:scale-110' src={image8} alt="" />
-                        <a className='absolute bg-gray-200 p-5 text-black text-xl font-semibold rounded-md transition-transform duration-1000 ease-in-out hover:bg-red-600' href="" style={{ zIndex: 10 }}>LUNCH</a>
+                        <a className='absolute bg-gray-200 p-5 text-black text-xl font-semibold rounded-md transition-transform duration-1000 ease-in-out hover:bg-red-600' href={'/menu'} style={{ zIndex: 10 }}>LUNCH</a>
 
                     </div>
                     <div className="row-span-2 overflow-hidden flex justify-center items-center relative">
                         <img className='h-full w-full transform transition-transform duration-500 hover:scale-110' src='https://images.pexels.com/photos/338713/pexels-photo-338713.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' alt="" />
-                        <a className='absolute bg-gray-200 p-5 text-black text-xl font-semibold rounded-md transition-transform duration-1000 ease-in-out hover:bg-red-600' href="" style={{ zIndex: 10 }}>FRESH JUICE</a>
+                        <a className='absolute bg-gray-200 p-5 text-black text-xl font-semibold rounded-md transition-transform duration-1000 ease-in-out hover:bg-red-600' href={'/menu'} style={{ zIndex: 10 }}>FRESH JUICE</a>
                     </div>
 
 
                     <div className="overflow-hidden flex justify-center items-center relative">
                         <img className='h-full w-full transform transition-transform duration-500 hover:scale-110' src='https://www.bigbasket.com/media/uploads/recipe/w-l/2663_1_1.jpg' alt="" />
-                        <a className='absolute bg-gray-200 p-5 text-black text-xl font-semibold rounded-md transition-transform duration-1000 ease-in-out hover:bg-red-600' href="" style={{ zIndex: 10 }}>HOT DRINKS</a>
+                        <a className='absolute bg-gray-200 p-5 text-black text-xl font-semibold rounded-md transition-transform duration-1000 ease-in-out hover:bg-red-600' href={'/menu'} style={{ zIndex: 10 }}>HOT DRINKS</a>
                     </div>
 
                     <div className="col-span-2 col-start-1 row-start-3 overflow-hidden flex justify-center items-center relative">
                         <img className='h-full w-full transform transition-transform duration-500 hover:scale-110' src='https://media.istockphoto.com/id/868408746/photo/assorted-indian-dish.jpg?s=612x612&w=0&k=20&c=XLsAk571Z2kEe_x6TnXWSzsG95-2agp-TcYswQrKHuo=' alt="" />
-                        <a className='absolute bg-gray-200 p-5 text-black text-xl font-semibold rounded-md transition-transform duration-1000 ease-in-out hover:bg-red-600' href="" style={{ zIndex: 10 }}>DINNER</a>
+                        <a className='absolute bg-gray-200 p-5 text-black text-xl font-semibold rounded-md transition-transform duration-1000 ease-in-out hover:bg-red-600' href={'/menu'} style={{ zIndex: 10 }}>DINNER</a>
                     </div>
 
                     <div className="col-start-3 row-start-3 overflow-hidden flex justify-center items-center relative">
                         <img className='h-full w-full transform transition-transform duration-500 hover:scale-110' src='https://images.herzindagi.info/image/2020/Jun/chocolate-parle-g-ice-cream.jpg' alt="" />
-                        <a className='absolute bg-gray-200 p-5 text-black text-xl font-semibold rounded-md transition-transform duration-1000 ease-in-out hover:bg-red-600' href="" style={{ zIndex: 10 }}>ICE CREAM</a>
+                        <a className='absolute bg-gray-200 p-5 text-black text-xl font-semibold rounded-md transition-transform duration-1000 ease-in-out hover:bg-red-600' href={'/menu'} style={{ zIndex: 10 }}>ICE CREAM</a>
                     </div>
 
                     <div className="col-start-3 row-start-2 overflow-hidden flex justify-center items-center relative">
                         <img className='h-full w-full transform transition-transform duration-500 hover:scale-110' src={image10} alt="" />
-                        <a className='absolute bg-gray-200 p-5 text-black text-xl font-semibold rounded-md transition-transform duration-1000 ease-in-out hover:bg-red-600' href="" style={{ zIndex: 10 }}>FRIED PIZZA</a>
+                        <a className='absolute bg-gray-200 p-5 text-black text-xl font-semibold rounded-md transition-transform duration-1000 ease-in-out hover:bg-red-600' href={'/menu'} style={{ zIndex: 10 }}>FRIED PIZZA</a>
                     </div>
 
                 </div>

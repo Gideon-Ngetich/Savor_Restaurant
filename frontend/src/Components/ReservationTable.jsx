@@ -14,7 +14,7 @@ const ReservationTable = () => {
 
   const handleBook = async () => {
     try {
-      await axios.post('http://localhost:5500/api/reserve-table', { name, email, phone, people, date, time })
+      await axios.post('https://savor-restaurant-1.onrender.com/api/reserve-table', { name, email, phone, people, date, time })
       console.log('Reservation successful');
       enqueSnackbar('Reservation Successful', {variant: 'success'});
     } catch (err) {

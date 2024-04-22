@@ -15,13 +15,15 @@ const Reservation = () => {
     if(loading){
        return <Loader />
     }
-  const langingBackground = bgImage;
+  const langingBackground = 'https://www.google.com/url?sa=i&url=https%3A%2F%2Ftodayshomeowner.com%2Fblog%2Fguides%2Frestaurant-interior-design%2F&psig=AOvVaw3LOn5dS2t7cDl3V40HACym&ust=1713596884521000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCLDV3__bzYUDFQAAAAAdAAAAABAE'
 
   return (
     <>
       <TopNav />
-      <div className='bg-cover bg-fixed h-80 w-screen flex justify-center items-center overflow-hidden' style={{ backgroundImage: `url(${langingBackground})` }}>
-        <p className='text-5xl lg:text-6xl font-extrabold text-white'>RESERVATION</p>
+      <div className='bg-cover bg-fixed h-80 w-screen flex justify-center items-center overflow-hidden' style={{ backgroundImage: `url('https://www.restaurantinteriordesign.eu/wp-content/uploads/2020/08/Gatserelia-Design-The-Amazing-Vienna-AI-Restaurant-3.jpg')` }}>
+      <p className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white">
+            RESERVATION
+          </p>
       </div>
 
       <div className='flex flex-col justify-center items-center p-10 overflow-hidden'>

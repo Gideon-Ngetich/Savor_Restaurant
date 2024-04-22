@@ -3,12 +3,18 @@ import TopNav from "../Components/Navbar";
 import video from '../assets/video-1.mp4'
 import Footer from '../Components/Footer'
 import image12 from '../assets/image-12.jpg'
+import interor2 from '../assets/interior2.jpg'
+import receipe from '../assets/receipe.jpg'
+import Loader from "../Components/Loader"
+
 
 const About = () => {
   const navRef = useRef(null);
   const bottomRef = useRef(null);
   const videoRef = useRef(null);
   const [showVideo, setShowVideo] = useState(false);
+  const [loading, setLoading] = useState(true);
+
 
 
   useEffect(() => {
@@ -40,8 +46,16 @@ const About = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 3300)
+  }, [])
+  if (loading) {
+    return <Loader />
+  }
+
   const bgImg =
     "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmVzdGF1cmFudHxlbnwwfHwwfHx8MA%3D%3D";
+
 
   return (
     <>
@@ -52,7 +66,7 @@ const About = () => {
           style={{ backgroundImage: `url(${bgImg})` }}
         >
           <p className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white">
-            About Us
+            ABOUT US
           </p>
         </div>
 
@@ -98,7 +112,7 @@ const About = () => {
         <div className="my-20">
           <div className="flex flex-col-reverse lg:flex-row justify-center items-center gap-5 w-full text-center p-10">
             <div className="flex justify-center items-center w-full lg:w-1/2">
-              <img src={bgImg} alt="" className="w-full lg:w-3/4 rounded-md"/>
+              <img src={interor2} alt="" className="w-full lg:w-3/4 rounded-md" />
             </div>
             <div className="flex flex-col w-full lg:w-1/2">
               <span style={{ fontFamily: 'satisfy' }} className="text-yellow-500 text-3xl lg:text-4xl xl:text-5xl">Romantic</span>
@@ -109,7 +123,7 @@ const About = () => {
 
           <div className="flex flex-col-reverse lg:flex-row-reverse justify-center items-center gap-5 w-full text-center p-10">
             <div className="flex justify-center items-center w-full lg:w-1/2">
-              <img src={bgImg} alt="" className="w-full lg:w-3/4 rounded-md"/>
+              <img src={receipe} alt="" className="w-full lg:w-3/4 rounded-md" />
             </div>
             <div className="flex flex-col w-full lg:w-1/2">
               <span style={{ fontFamily: 'satisfy' }} className="text-yellow-500 text-3xl lg:text-4xl xl:text-5xl">Delicious</span>
@@ -120,7 +134,7 @@ const About = () => {
         </div>
       </div>
       <div className="w-screen h-[600px] overflow-hidden">
-        <img src={image12} alt="" srcset="" className="w-full h-full"/>
+        <img src={image12} alt="" srcset="" className="w-full h-full" />
       </div>
       <div>
         <Footer />
