@@ -32,8 +32,8 @@ const Menu = () => {
 
   useEffect(() => {
     // axios.get('https://promise-website.onrender.com/api/food-category')
-    // axios.get('http://localhost:5500/api/food-category')
-    axios.get('https://savor-restaurant-1.onrender.com/api/food-category')
+    axios.get('http://localhost:5500/api/food-category')
+    // axios.get('https://savor-restaurant-1.onrender.com/api/food-category')
       .then(response => {
         const filteredCategories = response.data.filter(category => category.name !== 'Lunch');
         const lunchCategory = response.data.filter(category => category.name === 'Lunch');
@@ -63,19 +63,15 @@ const Menu = () => {
     <>
       <TopNav />
 
-      <div className='bg-cover bg-fixed h-96 w-screen  flex justify-center items-center' style={{ backgroundImage: `url(${langingBackground})` }}>
+      <div className='hidden bg-cover bg-fixed h-96 w-screen lg:flex justify-center items-center' style={{ backgroundImage: `url(${langingBackground})` }}>
         <p className='text-7xl font-extrabold text-white'>Savor Menu</p>
       </div>
-      <div className='hidden bg-cover bg-fixed h-96 w-full lg:flex justify-center items-center' style={{ backgroundImage: `url('https://www.tastingtable.com/img/gallery/how-long-should-you-cook-beef-stew/l-intro-1658523369.jpg')` }}>
+      <div className='lg:hidden bg-cover bg-fixed h-96 w-full flex justify-center items-center' style={{ backgroundImage: `url('https://www.tastingtable.com/img/gallery/how-long-should-you-cook-beef-stew/l-intro-1658523369.jpg')` }}>
       <p className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white">
             Savor Menu
           </p>
       </div>
-      <div className='lg:hidden bg-cover bg-fixed h-96 w-full flex justify-center items-center' style={{ backgroundImage: `url('https://media.istockphoto.com/id/1165399909/photo/delicious-meal-on-a-black-plate-top-view-copy-space.jpg?s=612x612&w=0&k=20&c=vrMzS4pY_QjiDtCzpVE3ClKqbU636fb4CKH0nlsduC4=')` }}>
-      <p className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white">
-            Savor Menu
-          </p>
-      </div>
+      
 
       <div className='grid grid-cols-1 lg:grid-cols-2 justify-between p-2 lg:p-7 gap-10'>
         {categories.map(category => (
