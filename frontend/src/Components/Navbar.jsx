@@ -5,35 +5,25 @@ import { useState, useEffect } from 'react';
 import { Avatar, Dropdown, Navbar } from 'flowbite-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios'
+import { IoCartOutline } from "react-icons/io5";
+import { useIsLoggedIn } from '../hooks/verification';
+
 
 
 
 function TopNav() {
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const CustomNavbar = () => {
+  const navigate = useNavigate()
+  const isLoggedIn = useIsLoggedIn()
+  console.log(isLoggedIn)
 
-
-    useEffect(() => {
-      // Check if user is logged in
-      axios.get('/api/protected')
-        .then(response => {
-          if (response.data.loggedIn) {
-            setIsLoggedIn(true);
-            navigate('/cart');
-          }
-        })
-        .catch(error => {
-          console.error('Error checking login status:', error);
-        });
-    }, []);
+  const handleCartClick = () => {
+    if (isLoggedIn) {
+      navigate('/cart')
+    } else {
+      navigate('/login')
+    }
   }
-  const handleLogout = () => {
-    // Perform logout actions
-    // For example, clear session, remove tokens, etc.
-    // Then redirect to the login page
-    history.push('/login');
-  };
+
 
 
   return (
@@ -41,7 +31,11 @@ function TopNav() {
       <Navbar.Brand href="#">
         <span className="self-center whitespace-nowrap text-xl text-white font-semibold ">Savor Restaurant</span>
       </Navbar.Brand>
-      <div className="flex md:order-2">
+      <div className="flex md:order-2 gap-2 justify-bottom items-bottom">
+        <div>
+          <IoCartOutline onClick={handleCartClick} className='w-9 h-9 hover:text-slate-300 duration-100 ease-in' />
+        </div>
+        <div className='bg-red-500 rounded-full relative -left-4 w-5 text-white h-5 text-sm -top-2 flex justify-center items-center'>1</div>
         <Dropdown
           arrowIcon={false}
           inline
@@ -53,17 +47,14 @@ function TopNav() {
             <span className="block text-sm">Bonnie Green</span>
             <span className="block truncate text-sm font-medium">name@flowbite.com</span>
           </Dropdown.Header>
-          {isLoggedIn && (
-            
-              <Dropdown.Item onClick={CustomNavbar}>Cart</Dropdown.Item>
-            
-          )}
           <Dropdown.Item>Profile</Dropdown.Item>
           <Dropdown.Divider />
-          <Dropdown.Item onClick={handleLogout}>Sign out</Dropdown.Item>
+          <Dropdown.Item>Sign out</Dropdown.Item>
         </Dropdown>
         <Navbar.Toggle />
+
       </div>
+
       <Navbar.Collapse>
         <Navbar.Link href="/" className='text-white'>
           Home
@@ -73,7 +64,11 @@ function TopNav() {
         <Navbar.Link href="/reservation" className='text-white'>Reservation</Navbar.Link>
         <Navbar.Link href="/gallery" className='text-white'>Gallery</Navbar.Link>
         <Navbar.Link href="/contacts" className='text-white'>Contacts</Navbar.Link>
+
       </Navbar.Collapse>
+      <div>
+
+      </div>
     </Navbar>
   );
 }
