@@ -27,12 +27,12 @@ function TopNav() {
   }
 
   const [totalItems, setTotalItems] = useState(0);
-
+  const [userInfo, setUserInfo] = useState({});
   useEffect(() => {
     const fetchTotalItems = async () => {
       try {
         // Check if the user is logged in
-        const userId = localStorage.getItem('u');
+        const userId = localStorage.getItem('UserId');
         if (!userId) return; // Exit early if user is not logged in
 
         // Fetch total items for the logged-in user
@@ -59,15 +59,33 @@ function TopNav() {
   const handleSignOut = async () => {
     try {
       await axios.post('http://localhost:5500/api/logout');
-
+  
       localStorage.clear();
       enqueueSnackbar('Log out successful', { variant: 'success' })
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
-      // Handle sign-out error if needed
     }
   };
+
+  
+
+  // useEffect(() => {
+  //   const fetchUserInfo = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:5500/api/userinfo', { withCredentials: true });
+
+  //       if (response.status === 200) {
+  //         const { username, email } = response.data;
+  //         setUserInfo({ username, email });
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching user info:', error);
+  //     }
+  //   };
+
+  //   fetchUserInfo();
+  // }, []);
 
   return (
     <Navbar fluid rounded className='w-full bg-transparent '>
@@ -84,12 +102,12 @@ function TopNav() {
             arrowIcon={false}
             inline
             label={
-              <Avatar alt="User settings" img="https://flowbite.com/docs/images/people/profile-picture-5.jpg" rounded />
+              <Avatar alt="User settings" img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkoyUQaux4PEUmEPGc7PodeN8XbgC4aOBsug&usqp=CAUhttps://upload.wikimedia.org/wikipedia/commons/a/af/Default_avatar_profile.jpg" rounded />
             }
           >
             <Dropdown.Header>
-              <span className="block text-sm">Bonnie Green</span>
-              <span className="block truncate text-sm font-medium">name@flowbite.com</span>
+              <span className="block text-sm">{userInfo.username}</span>
+              <span className="block truncate text-sm font-medium">{userInfo.email}</span>
             </Dropdown.Header>
             <Dropdown.Item>Profile</Dropdown.Item>
             <Dropdown.Divider />
@@ -100,7 +118,7 @@ function TopNav() {
 
       </div>
 
-      <Navbar.Collapse>
+      <Navbar.Collapse className=''>
         <Navbar.Link href="/" className='text-white'>
           Home
         </Navbar.Link>

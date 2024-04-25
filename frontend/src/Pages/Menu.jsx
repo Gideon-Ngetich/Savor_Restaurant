@@ -24,7 +24,7 @@ const Menu = () => {
   const [lunch, setLunch] = useState([]);
   const [dinner, setDinner] = useState([])
   const [loading, setLoading] = useState(true);
-  const userId = localStorage.getItem('u')
+  const userId = localStorage.getItem('UserId')
 
   
   const {enqueSnackbar} = useSnackbar();

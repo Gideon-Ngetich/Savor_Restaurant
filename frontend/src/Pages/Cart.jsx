@@ -4,6 +4,8 @@ import TopNav from '../Components/Navbar'
 import { Table } from "flowbite-react";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 
@@ -12,6 +14,7 @@ const Cart = () => {
 
     const [cartItems, setCartItems] = useState([]);
     const [totalItems, setTotalItems] = useState(0);
+    // const navigate = useNavigate()
 
     // const {enqueSnackbar} = useSnackbar()
 
@@ -19,7 +22,7 @@ const Cart = () => {
     useEffect(() => {
         const fetchCartItems = async () => {
             try {
-                const userId = localStorage.getItem('u');
+                const userId = localStorage.getItem('UserId');
 
                 const response = await axios.post('http://localhost:5500/api/cart/removeDuplicates', {
                     userId: userId
@@ -169,6 +172,9 @@ const Cart = () => {
                         </Table>
                     </div>
                 </div>
+                <div>
+
+                </div>
                 <div className='w-full lg:w-1/4 md:w-full p-5'>
                     <div className='my-7'>
                         <h1 className='text-white font-bold font-sans text-xl border-b'>Summary</h1>
@@ -187,7 +193,9 @@ const Cart = () => {
                             <span>KES {calculateGrandTotal()}</span>
                         </span>
                         <span className='flex justify-center items-center'>
-                            <button className='bg-blue-500 w-40 h-10 text-black hover:bg-blue-700 font-bold text-lg duration-100 ease-in'>Checkout</button>
+                            <Link to={'/cart/checkout'}>
+                                <button className='bg-blue-500 w-40 h-10 text-black hover:bg-blue-700 font-bold text-lg duration-100 ease-in'>Checkout</button>
+                            </Link>
                         </span>
                     </div>
 
