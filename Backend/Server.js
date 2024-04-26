@@ -2,7 +2,7 @@ import express from "express"
 import mongoose from 'mongoose'
 import cors from 'cors'
 import { PORT, mongoDBURL } from './Config.js'
-import { Reservation, Category, Food, User, Gallery, Cart } from "./Models/Schema.js"
+import { Reservation, Category, Food, User, Gallery, Cart, Payment } from "./Models/Schema.js"
 import bodyParser from "body-parser"
 import dotenv from 'dotenv'
 dotenv.config()
@@ -12,6 +12,7 @@ import cryptoRandomString from 'crypto-random-string'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import multer from "multer"
+import axios from "axios"
 // import path from 'path'
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
@@ -188,6 +189,7 @@ app.post('/api/login', async (req, res) => {
     }
 })
 
+
 const verifyToken = (req, res, next) => {
     const accessToken = req.cookies.accessToken
 
@@ -218,6 +220,29 @@ app.post('/api/refreshToken', (req, res) => {
     })
 
 })
+// app.get('/api/userinfo', async (req, res) => {
+//     try {
+//       const userId = req.user.id; // Assuming you're using authentication middleware to attach the user to the request object
+
+//       // Fetch user details from the database
+//       const user = await User.findById(userId);
+
+//       if (!user) {
+//         return res.status(404).json({ message: 'User not found' });
+//       }
+
+//       // Extract username and email from the user object
+//       const { username, email } = user;
+
+//       res.status(200).json({ username, email });
+//     } catch (error) {
+//       console.error('Error fetching user info:', error);
+//       res.status(500).json({ message: 'Internal server error' });
+//     }
+//   });
+
+
+
 
 // app.get('/api/protected', verifyToken, (req, res) => {
 //     // const accessToken = req.cookies.accessToken.
@@ -231,7 +256,7 @@ app.get('/api/protected', verifyToken, (req, res) => {
 const blacklist = new Set();
 app.post('/api/logout', (req, res) => {
     const token = req.cookies.accessToken;
-    
+
     if (token) {
         blacklist.add(token);
     }
@@ -474,6 +499,122 @@ app.post('/api/cart/removeDuplicates', async (req, res) => {
     }
 });
 
+    const generateToken = async (req, res, next) => {
+        const secret = process.env.MPESA_SECRET_KEY;
+        const consumer = process.env.MPESA_CONSUMER_KEY;
+
+        const auth = Buffer.from(`${consumer}:${secret}`).toString('base64');
+        try {
+            const response = await axios.get('https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', {
+                headers: {
+                    'Authorization': `Basic ${auth}`
+                }
+            });
+
+            // console.log(response.data.access_token);
+            console.log(response.data.access_token)
+            return response.data.access_token; // Pass token to the next middleware
+            // res.status(200),json({token: response.data.access_token})
+            // next();
+        } catch (error) {
+            console.error(error.message);
+            // res.status(400).json({ error: error.message });
+        }
+    };
+
+    app.get('/api/token', (req,res) =>{
+        generateToken()
+    })
+    app.post('/api/stk', async (req, res) => {
+        const phone = req.body.phone.substring(1);
+        const amount = req.body.amount;
+        const token = await generateToken() // Retrieve token from the request object
+        const shortcode = process.env.MPESA_TILL;
+        const passkey = process.env.MPESA_PASSKEY;
+        const url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+
+        const date = new Date();
+        const timestamp = date.getFullYear() +
+            ("0" + (date.getMonth() + 1)).slice(-2) +
+            ("0" + date.getDate()).slice(-2) +
+            ("0" + date.getHours()).slice(-2) +
+            ("0" + date.getMinutes()).slice(-2) +
+            ("0" + date.getSeconds()).slice(-2);
 
 
-export default JWT_SECRET_KEY
+
+        const password = Buffer.from(shortcode + passkey + timestamp).toString("base64");
+
+        const data = {
+            BusinessShortCode: shortcode,
+            Password: password,
+            Timestamp: timestamp,
+            TransactionType: "CustomerPayBillOnline",
+            Amount: amount,
+            PartyA: `254${phone}`,
+            PartyB: shortcode,
+            PhoneNumber: `254${phone}`,
+            CallBackURL: "https://webhook.site/4584f792-6daf-45c6-82a3-59437923a10a/api/callback",
+            AccountReference: `paid 254${phone}`,
+            TransactionDesc: "Test"
+        }
+
+        await axios.post(url, data, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        }).then((data) => {
+            // console.log(data)
+            res.status(200).json(data.data)
+        }).catch((err) => {
+            console.log(err.message)
+            res.status(400).json(err.message)
+        })
+    });
+
+
+    app.post('/callback', (req, res) => {
+        const callbackData = req.body;
+
+        if (!callbackData.Body || !callbackData.Body.stkCallback || !callbackData.Body.stkCallback.callbackMetadata) {
+            console.log("Invalid callback data format");
+            return res.json("ok");
+        }
+
+        const metadata = callbackData.Body.stkCallback.callbackMetadata.Item;
+
+        // Extracting values from the callback metadata
+        const amountIndex = metadata.findIndex(item => item.Name === 'Amount');
+        const receiptNoIndex = metadata.findIndex(item => item.Name === 'MpesaReceiptNumber');
+        const dateIndex = metadata.findIndex(item => item.Name === 'TransactionDate');
+        const phoneIndex = metadata.findIndex(item => item.Name === 'PhoneNumber');
+
+        if (amountIndex === -1 || receiptNoIndex === -1 || dateIndex === -1 || phoneIndex === -1) {
+            console.log("Required metadata not found in callback data");
+            return res.json("ok");
+        }
+
+        const amount = metadata[amountIndex].Value;
+        const receiptNo = metadata[receiptNoIndex].Value;
+        const date = metadata[dateIndex].Value;
+        const phone = metadata[phoneIndex].Value;
+
+        // Creating a new Payment instance and saving it to the database
+        const payment = new Payment({
+            receiptNo: receiptNo,
+            number: phone,
+            amount: amount,
+            date: date
+        });
+
+        payment.save().then((data) => {
+            console.log(payment)
+            console.log({ message: 'Data sent successfully' });
+        }).catch((err) => {
+            console.log(err.message);
+        });
+
+        res.json("ok");
+    });
+
+    export default JWT_SECRET_KEY

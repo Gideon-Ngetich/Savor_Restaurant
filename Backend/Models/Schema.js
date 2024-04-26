@@ -128,3 +128,24 @@ const cartSchema = new mongoose.Schema({
 })
 
 export const Cart = mongoose.model('CartItems', cartSchema)
+
+const paymentSchema = new mongoose.Schema({
+    receiptNo:{
+        type: String,
+        required: true
+    },
+    number: {
+        type: String,
+        required: true
+    },
+    amount:{
+        type: String,
+        required: true
+    },
+    date:{
+        type: Number,
+        required: true
+    }
+})
+
+export const Payment = mongoose.model('Payment', paymentSchema)
