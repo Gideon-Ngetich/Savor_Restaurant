@@ -21,7 +21,7 @@ const Checkout = () => {
   
         try {
           // Fetch cart items for the user after updating quantities
-          const response = await axios.get(`http://localhost:5500/api/cart/${userId}`);
+          const response = await axios.get(`${process.env.BACKEND_URL}/api/cart/${userId}`);
           setCartItems(response.data);
           // Calculate total when cart items are fetched
           const calculatedTotal = calculateTotal(response.data);
@@ -61,7 +61,7 @@ const Checkout = () => {
         e.preventDefault();
         const grandTotal = calculateGrandTotal(total)
         setLoading(true)
-        axios.post('http://localhost:5500/api/stk', {
+        axios.post(`${process.env.BACKEND_URL}/api/stk`, {
             amount: grandTotal,phone
         })
         .then((res) =>{
