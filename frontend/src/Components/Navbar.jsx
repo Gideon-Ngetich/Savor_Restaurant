@@ -2,69 +2,123 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Avatar, Dropdown, Navbar } from 'flowbite-react';
-import { useNavigate } from 'react-router-dom';
+import { Avatar, Button, Dropdown, Navbar } from 'flowbite-react';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios'
+import { IoCartOutline } from "react-icons/io5";
+import { useIsLoggedIn } from '../hooks/verification';
+import { useSnackbar } from 'notistack';
+
 
 
 
 function TopNav() {
-  const navigate = useNavigate();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const CustomNavbar = () => {
+  const navigate = useNavigate()
+  const isLoggedIn = useIsLoggedIn()
+  const { enqueueSnackbar } = useSnackbar()
+  console.log(isLoggedIn)
 
-
-    useEffect(() => {
-      // Check if user is logged in
-      axios.get('/api/protected')
-        .then(response => {
-          if (response.data.loggedIn) {
-            setIsLoggedIn(true);
-            navigate('/cart');
-          }
-        })
-        .catch(error => {
-          console.error('Error checking login status:', error);
-        });
-    }, []);
+  const handleCartClick = () => {
+    if (isLoggedIn) {
+      navigate('/cart')
+    } else {
+      navigate('/login')
+    }
   }
-  const handleLogout = () => {
-    // Perform logout actions
-    // For example, clear session, remove tokens, etc.
-    // Then redirect to the login page
-    history.push('/login');
+
+  const [totalItems, setTotalItems] = useState(0);
+  const [userInfo, setUserInfo] = useState({});
+  useEffect(() => {
+    const fetchTotalItems = async () => {
+      try {
+        // Check if the user is logged in
+        const userId = localStorage.getItem('UserId');
+        if (!userId) return; // Exit early if user is not logged in
+
+        // Fetch total items for the logged-in user
+        const response = await axios.get(`http://localhost:5500/api/cart/${userId}`);
+
+        // Calculate total quantity of all items in the cart
+        const total = response.data.reduce((acc, item) => acc + item.quantity, 0);
+        setTotalItems(total);
+      } catch (error) {
+        console.error('Error fetching total items:', error);
+      }
+    };
+
+    // Fetch total items initially
+    fetchTotalItems();
+
+    // Poll for updates every 5 seconds
+    const intervalId = setInterval(fetchTotalItems, 5000);
+
+    // Clean up interval on component unmount
+    return () => clearInterval(intervalId);
+  }, []);
+
+  const handleSignOut = async () => {
+    try {
+      await axios.post('http://localhost:5500/api/logout');
+  
+      localStorage.clear();
+      enqueueSnackbar('Log out successful', { variant: 'success' })
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
+  
+
+  // useEffect(() => {
+  //   const fetchUserInfo = async () => {
+  //     try {
+  //       const response = await axios.get('http://localhost:5500/api/userinfo', { withCredentials: true });
+
+  //       if (response.status === 200) {
+  //         const { username, email } = response.data;
+  //         setUserInfo({ username, email });
+  //       }
+  //     } catch (error) {
+  //       console.error('Error fetching user info:', error);
+  //     }
+  //   };
+
+  //   fetchUserInfo();
+  // }, []);
 
   return (
     <Navbar fluid rounded className='w-full bg-transparent '>
       <Navbar.Brand href="#">
         <span className="self-center whitespace-nowrap text-xl text-white font-semibold ">Savor Restaurant</span>
       </Navbar.Brand>
-      <div className="flex md:order-2">
-        <Dropdown
-          arrowIcon={false}
-          inline
-          label={
-            <Avatar alt="User settings" img="https://flowbite.com/docs/images/people/profile-picture-5.jpg" rounded />
-          }
-        >
-          <Dropdown.Header>
-            <span className="block text-sm">Bonnie Green</span>
-            <span className="block truncate text-sm font-medium">name@flowbite.com</span>
-          </Dropdown.Header>
-          {isLoggedIn && (
-            
-              <Dropdown.Item onClick={CustomNavbar}>Cart</Dropdown.Item>
-            
-          )}
-          <Dropdown.Item>Profile</Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Item onClick={handleLogout}>Sign out</Dropdown.Item>
-        </Dropdown>
+      <div className="flex md:order-2 gap-2 justify-bottom items-bottom">
+        <div>
+          <IoCartOutline onClick={handleCartClick} className='w-9 h-9 hover:text-slate-300 duration-100 ease-in' />
+        </div>
+        <div className='bg-red-500 rounded-full relative -left-4 w-5 text-white h-5 text-sm -top-2 flex justify-center items-center'>{totalItems}</div>
+        {isLoggedIn ? (
+          <Dropdown
+            arrowIcon={false}
+            inline
+            label={
+              <Avatar alt="User settings" img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkoyUQaux4PEUmEPGc7PodeN8XbgC4aOBsug&usqp=CAUhttps://upload.wikimedia.org/wikipedia/commons/a/af/Default_avatar_profile.jpg" rounded />
+            }
+          >
+            <Dropdown.Header>
+              <span className="block text-sm">{userInfo.username}</span>
+              <span className="block truncate text-sm font-medium">{userInfo.email}</span>
+            </Dropdown.Header>
+            <Dropdown.Item>Profile</Dropdown.Item>
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={handleSignOut}>Sign out</Dropdown.Item>
+          </Dropdown>
+        ) : <Link to='/login' className='px-10 bg-blue-800 text-white rounded-md font-bold text-center flex justify-center items-center hover:bg-blue-900 duration-100 ease-in'>Login</Link>}
         <Navbar.Toggle />
+
       </div>
-      <Navbar.Collapse>
+
+      <Navbar.Collapse className=''>
         <Navbar.Link href="/" className='text-white'>
           Home
         </Navbar.Link>
@@ -73,7 +127,11 @@ function TopNav() {
         <Navbar.Link href="/reservation" className='text-white'>Reservation</Navbar.Link>
         <Navbar.Link href="/gallery" className='text-white'>Gallery</Navbar.Link>
         <Navbar.Link href="/contacts" className='text-white'>Contacts</Navbar.Link>
+
       </Navbar.Collapse>
+      <div>
+
+      </div>
     </Navbar>
   );
 }

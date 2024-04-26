@@ -10,6 +10,8 @@ import Signup from './Pages/Signup'
 import Gallery from './Pages/Gallery'
 import Cart from './Pages/Cart'
 import Admin from './Pages/Admin'
+import userProfile from './Pages/userProfile'
+import Checkout from './Pages/Checkout'
 
 function App() {
   
@@ -25,7 +27,9 @@ function App() {
         <Route path='/reservation' Component={Reservation}/>
         <Route path='/contacts' Component={Contacts}/>
         <Route path='/cart' Component={Cart}/>
+        <Route path='/cart/Checkout' Component={Checkout}/>
         <Route path='/admin' Component={Admin}/>
+        <Route path='/profile' Component={userProfile}/>
       </Routes>
     </>
   )
