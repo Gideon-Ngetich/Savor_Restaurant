@@ -36,7 +36,7 @@ function TopNav() {
         if (!userId) return; // Exit early if user is not logged in
 
         // Fetch total items for the logged-in user
-        const response = await axios.get(`http://localhost:5500/api/cart/${userId}`);
+        const response = await axios.get(`${process.env.BACKEND_URL}/api/cart/${userId}`);
 
         // Calculate total quantity of all items in the cart
         const total = response.data.reduce((acc, item) => acc + item.quantity, 0);
@@ -58,7 +58,7 @@ function TopNav() {
 
   const handleSignOut = async () => {
     try {
-      await axios.post('http://localhost:5500/api/logout');
+      await axios.post(`${process.env.BACKEND_URL}/api/logout`);
   
       localStorage.clear();
       enqueueSnackbar('Log out successful', { variant: 'success' })
