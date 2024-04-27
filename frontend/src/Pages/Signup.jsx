@@ -20,6 +20,7 @@ const Signup = () => {
     const { enqueueSnackbar } = useSnackbar();
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate()
+    const link = 'https://savor-restaurant-1.onrender.com'
 
     useEffect(() => {
         setTimeout(() => setLoading(false), 3300)
@@ -82,7 +83,7 @@ const Signup = () => {
                     return;
                 }
 
-                const response = await axios.post('https://savor-restaurant-1.onrender.com/api/users', { userName, email, phone, location, password });
+                const response = await axios.post(`${link}/api/users`, { userName, email, phone, location, password });
 
                 console.log('Response:', response);
 

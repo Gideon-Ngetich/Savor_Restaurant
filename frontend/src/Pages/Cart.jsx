@@ -24,7 +24,7 @@ const Cart = () => {
             try {
                 const userId = localStorage.getItem('UserId');
 
-                const response = await axios.post('http://savor-restaurant-1.onrender.com/api/cart/removeDuplicates', {
+                const response = await axios.post('https://savor-restaurant-1.onrender.com/api/cart/removeDuplicates', {
                     userId: userId
                 });
 
@@ -82,7 +82,7 @@ const Cart = () => {
             setCartItems(updatedCartItems);
 
             // Make POST request to update quantity in the database
-            await axios.post(`${process.env.BACKEND_URL}/api/cart/Quantity` || 'https://savor-restaurant-1.onrender.com/api/cart/Quantity', {
+            await axios.post('https://savor-restaurant-1.onrender.com/api/cart/Quantity', {
                 itemId,
                 quantity: updatedCartItems[index].quantity
             });
@@ -94,7 +94,7 @@ const Cart = () => {
 
     const handleRemoveItem = async (itemId) => {
         try {
-            await axios.delete(`${process.env.BACKEND_URL}/api/cart/removeItem/${itemId}` || `http://savor-restaurant-1.onrender.com/api/cart/removeItem/${itemId}`);
+            await axios.delete(`http://savor-restaurant-1.onrender.com/api/cart/removeItem/${itemId}`);
             // Optionally, update the UI to reflect the removal of the item from the cart
             setCartItems(prevItems => prevItems.filter(item => item._id !== itemId));
             console.log("Item removed successfully");
