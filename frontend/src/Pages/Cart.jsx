@@ -46,7 +46,7 @@ const Cart = () => {
     const fetchUpdatedCartItems = async (userId) => {
         try {
             // Fetch cart items for the user after updating quantities
-            const response = await axios.get(`${process.env.BACKEND_URL}/api/cart/${userId}` || `http://savor-restaurant-1.onrender.com/api/cart/${userId}`);
+            const response = await axios.get(`http://savor-restaurant-1.onrender.com/api/cart/${userId}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching updated cart items:', error);
@@ -62,7 +62,7 @@ const Cart = () => {
                 setCartItems(updatedCartItems);
 
                 // Make POST request to update quantity in the database
-                await axios.post(`${process.env.BACKEND_URL}/api/cart/Quantity` || `http://savor-restaurant-1.onrender.com/api/cart/Quantity`, {
+                await axios.post(`http://savor-restaurant-1.onrender.com/api/cart/Quantity`, {
                     itemId,
                     quantity: updatedCartItems[index].quantity
                 });

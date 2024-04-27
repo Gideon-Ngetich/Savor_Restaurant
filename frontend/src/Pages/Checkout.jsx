@@ -21,7 +21,7 @@ const Checkout = () => {
   
         try {
           // Fetch cart items for the user after updating quantities
-          const response = await axios.get(`${process.env.BACKEND_URL}/api/cart/${userId}`) || `http://savor-restaurant-1.onrender.com/api/cart/${userId}`;
+          const response = await axios.get(`http://savor-restaurant-1.onrender.com/api/cart/${userId}`);
           setCartItems(response.data);
           // Calculate total when cart items are fetched
           const calculatedTotal = calculateTotal(response.data);

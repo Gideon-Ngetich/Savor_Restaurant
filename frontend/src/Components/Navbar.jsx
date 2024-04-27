@@ -58,7 +58,7 @@ function TopNav() {
 
   const handleSignOut = async () => {
     try {
-      await axios.post(`${process.env.BACKEND_URL}/api/logout` || 'https://savor-restaurant-1.onrender.com/api/logout');
+      await axios.post('https://savor-restaurant-1.onrender.com/api/logout');
   
       localStorage.clear();
       enqueueSnackbar('Log out successful', { variant: 'success' })
