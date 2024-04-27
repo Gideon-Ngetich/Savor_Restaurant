@@ -12,6 +12,7 @@ const AddToCartButton = ({ userId, foodName, price,quantity = 1, withIcon }) => 
     const isLoggedIn = useIsLoggedIn();
     const navigate = useNavigate()
     const {enqueueSnackbar} = useSnackbar();
+    const link = 'https://savor-restaurant-1.onrender.com'
 
     const handleAddToCart = async () => {
         if (!isLoggedIn) {
@@ -20,7 +21,7 @@ const AddToCartButton = ({ userId, foodName, price,quantity = 1, withIcon }) => 
         }
 
         try {
-            const response = await axios.post('http://localhost:5500/api/cart/add', {
+            const response = await axios.post(`${link}/api/cart/add`, {
                 userId, foodName, price, quantity
             })
             console.log("Items added successfully")

@@ -14,6 +14,7 @@ const Checkout = () => {
     const [phone, setPhone] = useState()
     const [isLoading,setLoading] = useState(false)
     const [error, setError] = useState(null)
+    const link = 'https://savor-restaurant-1.onrender.com'
   
     useEffect(() => {
       const fetchUpdatedCartItems = async () => {
@@ -21,7 +22,7 @@ const Checkout = () => {
   
         try {
           // Fetch cart items for the user after updating quantities
-          const response = await axios.get(`http://localhost:5500/api/cart/${userId}`);
+          const response = await axios.get(`${link}/api/cart/${userId}`);
           setCartItems(response.data);
           // Calculate total when cart items are fetched
           const calculatedTotal = calculateTotal(response.data);
@@ -61,7 +62,7 @@ const Checkout = () => {
         e.preventDefault();
         const grandTotal = calculateGrandTotal(total)
         setLoading(true)
-        axios.post('http://localhost:5500/api/stk', {
+        axios.post('https:/savor-restaurant-1.onrender.com/api/stk', {
             amount: grandTotal,phone
         })
         .then((res) =>{

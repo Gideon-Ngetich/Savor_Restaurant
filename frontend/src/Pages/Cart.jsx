@@ -14,8 +14,9 @@ const Cart = () => {
 
     const [cartItems, setCartItems] = useState([]);
     const [totalItems, setTotalItems] = useState(0);
+    const link = 'https://savor-restaurant-1.onrender.com'
     // const navigate = useNavigate()
-
+    
     // const {enqueSnackbar} = useSnackbar()
 
 
@@ -24,7 +25,7 @@ const Cart = () => {
             try {
                 const userId = localStorage.getItem('UserId');
 
-                const response = await axios.post('http://localhost:5500/api/cart/removeDuplicates', {
+                const response = await axios.post(`${link}/api/cart/removeDuplicates`, {
                     userId: userId
                 });
 
@@ -46,7 +47,7 @@ const Cart = () => {
     const fetchUpdatedCartItems = async (userId) => {
         try {
             // Fetch cart items for the user after updating quantities
-            const response = await axios.get(`http://localhost:5500/api/cart/${userId}`);
+            const response = await axios.get(`${link}/api/cart/${userId}`);
             return response.data;
         } catch (error) {
             console.error('Error fetching updated cart items:', error);
@@ -62,7 +63,7 @@ const Cart = () => {
                 setCartItems(updatedCartItems);
 
                 // Make POST request to update quantity in the database
-                await axios.post('http://localhost:5500/api/cart/Quantity', {
+                await axios.post(`${link}/api/cart/Quantity`, {
                     itemId,
                     quantity: updatedCartItems[index].quantity
                 });
@@ -82,7 +83,7 @@ const Cart = () => {
             setCartItems(updatedCartItems);
 
             // Make POST request to update quantity in the database
-            await axios.post('http://localhost:5500/api/cart/Quantity', {
+            await axios.post(`${link}/api/cart/Quantity`, {
                 itemId,
                 quantity: updatedCartItems[index].quantity
             });
@@ -94,7 +95,7 @@ const Cart = () => {
 
     const handleRemoveItem = async (itemId) => {
         try {
-            await axios.delete(`http://localhost:5500/api/cart/removeItem/${itemId}`);
+            await axios.delete(`${link}/api/cart/removeItem/${itemId}`);
             // Optionally, update the UI to reflect the removal of the item from the cart
             setCartItems(prevItems => prevItems.filter(item => item._id !== itemId));
             console.log("Item removed successfully");

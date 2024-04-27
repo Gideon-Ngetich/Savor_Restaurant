@@ -16,7 +16,7 @@ function TopNav() {
   const navigate = useNavigate()
   const isLoggedIn = useIsLoggedIn()
   const { enqueueSnackbar } = useSnackbar()
-  console.log(isLoggedIn)
+  const link = 'https://savor-restaurant-1.onrender.com'
 
   const handleCartClick = () => {
     if (isLoggedIn) {
@@ -36,7 +36,7 @@ function TopNav() {
         if (!userId) return; // Exit early if user is not logged in
 
         // Fetch total items for the logged-in user
-        const response = await axios.get(`http://localhost:5500/api/cart/${userId}`);
+        const response = await axios.get(`${link}/api/cart/${userId}`);
 
         // Calculate total quantity of all items in the cart
         const total = response.data.reduce((acc, item) => acc + item.quantity, 0);
@@ -58,7 +58,7 @@ function TopNav() {
 
   const handleSignOut = async () => {
     try {
-      await axios.post('http://localhost:5500/api/logout');
+      await axios.post(`${link}/api/logout`);
   
       localStorage.clear();
       enqueueSnackbar('Log out successful', { variant: 'success' })

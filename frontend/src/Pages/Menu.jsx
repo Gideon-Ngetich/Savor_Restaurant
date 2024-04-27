@@ -25,14 +25,14 @@ const Menu = () => {
   const [dinner, setDinner] = useState([])
   const [loading, setLoading] = useState(true);
   const userId = localStorage.getItem('UserId')
-
+  const link = 'https://savor-restaurant-1.onrender.com'
   
   const {enqueSnackbar} = useSnackbar();
   // const backendURL = import.meta.env.BACKEND_URL
 
   useEffect(() => {
     // axios.get('https://promise-website.onrender.com/api/food-category')
-    axios.get('http://localhost:5500/api/food-category')
+    axios.get(`${link}//api/food-category`)
     // axios.get('https://savor-restaurant-1.onrender.com/api/food-category')
       .then(response => {
         const filteredCategories = response.data.filter(category => category.name !== 'Lunch');

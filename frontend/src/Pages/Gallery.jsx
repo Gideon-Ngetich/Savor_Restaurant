@@ -6,17 +6,18 @@ const GalleryBackground = () => {
   const categories = ['All Photos', 'Food', 'Events','Interior','Moments'];
   const [currentCategory, setCurrentCategory] = useState('All Photos');
   const [images, setImages] = useState([]);
+  const link = 'https://savor-restaurant-1.onrender.com'
 
   useEffect(() => {
     const fetchImages = async () => {
       try {
         let response;
         if (currentCategory === 'All Photos') {
-          response = await axios.get('https://savor-restaurant-1.onrender.com/api/Gallery');
+          response = await axios.get(`${link}/api/Gallery`);
         } else if(currentCategory === 'VIP Guests'){
-          response = await axios.get('https://savor-restaurant-1.onrender.com/api/Gallery?category={VIP}')
+          response = await axios.get(`${link}/api/Gallery?category={VIP}`)
         }else {
-          response = await axios.get('https://savor-restaurant-1.onrender.com/api/Gallery?category=${currentCategory}');
+          response = await axios.get(`${link}/api/Gallery?category=${currentCategory}`);
         }
         setImages(response.data);
       } catch (error) {
