@@ -20,7 +20,7 @@ const AddToCartButton = ({ userId, foodName, price,quantity = 1, withIcon }) => 
         }
 
         try {
-            const response = await axios.post(`${process.env.BACKEND_URL}/api/cart/add` || 'htps://savor-restaurant-1.onrender.com/api/cart/add', {
+            const response = await axios.post('htps://savor-restaurant-1.onrender.com/api/cart/add', {
                 userId, foodName, price, quantity
             })
             console.log("Items added successfully")

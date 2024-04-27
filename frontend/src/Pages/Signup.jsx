@@ -82,7 +82,7 @@ const Signup = () => {
                     return;
                 }
 
-                const response = await axios.post(`${process.env.BACKEND_URL}/api/users` || 'https://savor-restaurant-1.onrender.com/api/users', { userName, email, phone, location, password });
+                const response = await axios.post('https://savor-restaurant-1.onrender.com/api/users', { userName, email, phone, location, password });
 
                 console.log('Response:', response);
 
