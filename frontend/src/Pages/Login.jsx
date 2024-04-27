@@ -43,7 +43,7 @@ const Login = () => {
       enqueueSnackbar('Password required', { variant: 'error' })
     } else {
       try {
-        const response = await axios.post(`${process.env.BACKEND_URL}/api/login`, { email, password }, { withCredentials: true });
+        const response = await axios.post(`${process.env.BACKEND_URL}/api/login` || `https://savor-restaurant-1.onrender.com/api/login`, { email, password }, { withCredentials: true });
 
 
         if (response.status === 200) {
