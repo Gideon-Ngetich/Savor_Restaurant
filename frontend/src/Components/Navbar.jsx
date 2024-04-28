@@ -17,6 +17,7 @@ function TopNav() {
   const isLoggedIn = useIsLoggedIn()
   const { enqueueSnackbar } = useSnackbar()
   const link = 'https://savor-restaurant-1.onrender.com'
+  const [user, setUser] = useState(null)
 
   const handleCartClick = () => {
     if (isLoggedIn) {
@@ -56,10 +57,23 @@ function TopNav() {
     return () => clearInterval(intervalId);
   }, []);
 
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const userId = localStorage.getItem('UserId')
+        const response = await axios.get(`http://localhost:5500/api/user/${userId}`)
+        setUser(response.data)
+      } catch (err) {
+        console.log(err.message)
+      }
+    }
+    fetchUserInfo()
+  }, [])
+
   const handleSignOut = async () => {
     try {
       await axios.post(`${link}/api/logout`);
-  
+
       localStorage.clear();
       enqueueSnackbar('Log out successful', { variant: 'success' })
       navigate('/');
@@ -68,7 +82,7 @@ function TopNav() {
     }
   };
 
-  
+
 
   // useEffect(() => {
   //   const fetchUserInfo = async () => {
@@ -105,10 +119,14 @@ function TopNav() {
               <Avatar alt="User settings" img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkoyUQaux4PEUmEPGc7PodeN8XbgC4aOBsug&usqp=CAUhttps://upload.wikimedia.org/wikipedia/commons/a/af/Default_avatar_profile.jpg" rounded />
             }
           >
-            <Dropdown.Header>
-              <span className="block text-sm">{userInfo.username}</span>
-              <span className="block truncate text-sm font-medium">{userInfo.email}</span>
-            </Dropdown.Header>
+            {user && (
+              <Dropdown.Header>
+
+                <span className="block text-sm">{user.userName}</span>
+                <span className="block truncate text-sm font-medium">{user.email}</span>
+
+              </Dropdown.Header>
+            )}
             <Dropdown.Item>Profile</Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item onClick={handleSignOut}>Sign out</Dropdown.Item>

@@ -1,16 +1,13 @@
-import { React, useState } from 'react';
-import UserSidebar from '../Components/UserSidebar';
+import React from 'react'
 import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
 import { Link } from 'react-router-dom';
 
 
-const userProfile = () => {
 
-  <>
-    <div>
-        {/* <UserSidebar /> */}
-
-        <Sidebar>
+const UserSidebar = () => {
+    return (
+        <>
+            <Sidebar>
                 <Menu
                     menuItemStyles={{
                         button: {
@@ -28,9 +25,8 @@ const userProfile = () => {
                     <MenuItem component={<Link to="/e-commerce" />}> E-commerce</MenuItem>
                 </Menu>
             </Sidebar>;
-    </div>
-  </>
-    ;
-};
+        </>
+    )
+}
 
-export default userProfile;
+export default UserSidebar

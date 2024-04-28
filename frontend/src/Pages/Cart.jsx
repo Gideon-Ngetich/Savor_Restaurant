@@ -14,7 +14,7 @@ const Cart = () => {
 
     const [cartItems, setCartItems] = useState([]);
     const [totalItems, setTotalItems] = useState(0);
-    const link = 'https://savor-restaurant-1.onrender.com'
+    const link = 'http://localhost:5500'
     // const navigate = useNavigate()
     
     // const {enqueSnackbar} = useSnackbar()
