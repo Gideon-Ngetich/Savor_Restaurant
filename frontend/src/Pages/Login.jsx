@@ -13,7 +13,9 @@ const Login = () => {
   const navigateTo = useNavigate()
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(true);
-  const link = 'https://savor-restaurant-1.onrender.com'
+  // const link = 'https://savor-restaurant-1.onrender.com'
+  const link = 'http://localhost:5500'
+
 
   const { enqueueSnackbar } = useSnackbar();
 

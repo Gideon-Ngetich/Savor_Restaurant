@@ -16,7 +16,9 @@ function TopNav() {
   const navigate = useNavigate()
   const isLoggedIn = useIsLoggedIn()
   const { enqueueSnackbar } = useSnackbar()
-  const link = 'https://savor-restaurant-1.onrender.com'
+  // const link = 'https://savor-restaurant-1.onrender.com'
+  const link = 'http://localhost:5500'
+
   const [user, setUser] = useState(null)
 
   const handleCartClick = () => {
@@ -61,7 +63,7 @@ function TopNav() {
     const fetchUserInfo = async () => {
       try {
         const userId = localStorage.getItem('UserId')
-        const response = await axios.get(`http://localhost:5500/api/user/${userId}`)
+        const response = await axios.get(`${link}/api/user/${userId}`)
         setUser(response.data)
       } catch (err) {
         console.log(err.message)
@@ -76,6 +78,7 @@ function TopNav() {
 
       localStorage.clear();
       enqueueSnackbar('Log out successful', { variant: 'success' })
+      window.location.reload()
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
@@ -102,13 +105,13 @@ function TopNav() {
   // }, []);
 
   return (
-    <Navbar fluid rounded className='w-full bg-transparent '>
+    <Navbar fluid rounded className=''>
       <Navbar.Brand href="#">
-        <span className="self-center whitespace-nowrap text-xl text-white font-semibold ">Savor Restaurant</span>
+        <span className="self-center whitespace-nowrap text-sm lg:text-xl xl:text-xl md:text-xl text-white font-semibold ">Savor Restaurant</span>
       </Navbar.Brand>
-      <div className="flex md:order-2 gap-2 justify-bottom items-bottom">
+      <div className="flex md:order-2 gap-1 justify-bottom items-bottom">
         <div>
-          <IoCartOutline onClick={handleCartClick} className='w-9 h-9 hover:text-slate-300 duration-100 ease-in' />
+          <IoCartOutline onClick={handleCartClick} className='w-8 h-8 lg:w-9 lg:h-9 md:w-9 md:h-9 xl:w-9 xl:h-9  hover:text-slate-300 duration-100 ease-in' />
         </div>
         <div className='bg-red-500 rounded-full relative -left-4 w-5 text-white h-5 text-sm -top-2 flex justify-center items-center'>{totalItems}</div>
         {isLoggedIn ? (
@@ -127,11 +130,15 @@ function TopNav() {
 
               </Dropdown.Header>
             )}
-            <Dropdown.Item>Profile</Dropdown.Item>
+            <Dropdown.Item>Account</Dropdown.Item>
+            <Dropdown.Item>Orders</Dropdown.Item>
+            <Dropdown.Item>Saved</Dropdown.Item>
+            <Dropdown.Item>Favourites</Dropdown.Item>
+            <Dropdown.Item>Review</Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item onClick={handleSignOut}>Sign out</Dropdown.Item>
           </Dropdown>
-        ) : <Link to='/login' className='px-10 bg-blue-800 text-white rounded-md font-bold text-center flex justify-center items-center hover:bg-blue-900 duration-100 ease-in'>Login</Link>}
+        ) : <Link to='/login' className='px-5 bg-blue-800 text-white rounded-md font-bold text-center flex justify-center items-center hover:bg-blue-900 duration-100 ease-in'>Login</Link>}
         <Navbar.Toggle />
 
       </div>
@@ -147,9 +154,6 @@ function TopNav() {
         <Navbar.Link href="/contacts" className='text-white'>Contacts</Navbar.Link>
 
       </Navbar.Collapse>
-      <div>
-
-      </div>
     </Navbar>
   );
 }

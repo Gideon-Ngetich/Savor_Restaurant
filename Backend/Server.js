@@ -183,18 +183,18 @@ app.post('/api/login', async (req, res) => {
         res.cookie('accessToken', accessToken, { httpOnly: true });
 
         res.cookie('refreshToken', refreshToken, { httpOnly: true })
-        // res.status(200).json({ message: 'login successful', accessToken, userId: user._id })
-        res.status(200).json({
-            message: 'Login successful',
-            accessToken,
-            user: {
-                userId: user._id,
-                userName: user.userName,
-                email: user.email,
-                location: user.location,
-                phone: user.phone
-            }
-        });
+        res.status(200).json({ message: 'login successful', accessToken, userId: user._id, user: {userName: user.userName, email: user.email, location: user.location, phone: user.phone} })
+        // res.status(200).json({
+        //     message: 'Login successful',
+        //     accessToken,
+        //     userId: user._id,
+        //     user: {
+        //         userName: user.userName,
+        //         email: user.email,
+        //         location: user.location,
+        //         phone: user.phone
+        //     }
+        // });
     } catch (error) {
         res.status(500).json({ message: "Error logging in" });
     }
