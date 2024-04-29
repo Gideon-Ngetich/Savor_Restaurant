@@ -1,22 +1,14 @@
-import React from 'react';
-import { useIsLoggedIn } from '../hooks/verification';
+import { React, useState } from 'react';
+import { Sidebar, Menu, MenuItem, SubMenu } from 'react-pro-sidebar';
+import { Link } from 'react-router-dom';
 
-const MyComponent = () => {
-  const { isLoggedIn, userId, accessToken } = useIsLoggedIn();
 
-  // Render different content based on the user's authentication status
-  return (
-    <div>
-      {isLoggedIn ? (
-        <div>
-          <p>User is logged in with ID: {userId}</p>
-          <p>Access Token: {accessToken}</p>
-        </div>
-      ) : (
-        <p>User is not logged in</p>
-      )}
-    </div>
-  );
+const userProfile = () => {
+
+  <>
+    
+  </>
+
 };
 
-export default MyComponent;
+export default userProfile;

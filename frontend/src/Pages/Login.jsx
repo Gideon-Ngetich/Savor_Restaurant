@@ -13,6 +13,9 @@ const Login = () => {
   const navigateTo = useNavigate()
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(true);
+  // const link = 'https://savor-restaurant-1.onrender.com'
+  const link = 'http://localhost:5500'
+
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -43,7 +46,7 @@ const Login = () => {
       enqueueSnackbar('Password required', { variant: 'error' })
     } else {
       try {
-        const response = await axios.post('https://savor-restaurant-1.onrender.com/api/login', { email, password }, { withCredentials: true });
+        const response = await axios.post(`${link}/api/login`, { email, password }, { withCredentials: true });
 
 
         if (response.status === 200) {

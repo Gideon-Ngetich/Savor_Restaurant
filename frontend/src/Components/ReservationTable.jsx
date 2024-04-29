@@ -10,11 +10,12 @@ const ReservationTable = () => {
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const {enqueSnackbar} = useSnackbar();
+  const link = 'https://savor-restaurant-1.onrender.com'
   // const backendURL = process.env.BACKEND_URL || 'https://promise-website.onrender.com'
 
   const handleBook = async () => {
     try {
-      await axios.post('https://savor-restaurant-1.onrender.com/api/reserve-table', { name, email, phone, people, date, time })
+      await axios.post(`${link}/api/reserve-table`, { name, email, phone, people, date, time })
       console.log('Reservation successful');
       enqueSnackbar('Reservation Successful', {variant: 'success'});
     } catch (err) {
