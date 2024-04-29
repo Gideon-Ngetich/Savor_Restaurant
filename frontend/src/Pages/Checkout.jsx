@@ -14,8 +14,8 @@ const Checkout = () => {
     const [phone, setPhone] = useState()
     const [isLoading, setLoading] = useState(false)
     const [error, setError] = useState(null)
-    // const link = 'https://savor-restaurant-1.onrender.com'
-    const link = 'http://localhost:5500'
+    const link = 'https://savor-restaurant-1.onrender.com'
+    // const link = 'http://localhost:5500'
 
 
     useEffect(() => {

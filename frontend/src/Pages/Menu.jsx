@@ -25,8 +25,8 @@ const Menu = () => {
   const [dinner, setDinner] = useState([])
   const [loading, setLoading] = useState(true);
   const userId = localStorage.getItem('UserId')
-  // const link = 'https://savor-restaurant-1.onrender.com'
-  const link = 'http://localhost:5500'
+  const link = 'https://savor-restaurant-1.onrender.com'
+  // const link = 'http://localhost:5500'
 
   
   const {enqueSnackbar} = useSnackbar();

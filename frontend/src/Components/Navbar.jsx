@@ -16,8 +16,8 @@ function TopNav() {
   const navigate = useNavigate()
   const isLoggedIn = useIsLoggedIn()
   const { enqueueSnackbar } = useSnackbar()
-  // const link = 'https://savor-restaurant-1.onrender.com'
-  const link = 'http://localhost:5500'
+  const link = 'https://savor-restaurant-1.onrender.com'
+  // const link = 'http://localhost:5500'
 
   const [user, setUser] = useState(null)
 
