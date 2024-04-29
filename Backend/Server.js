@@ -27,8 +27,8 @@ const JWT_SECRET_KEY = cryptoRandomString({ length: 32, type: 'base64' });
 // app.use(cors({credentials:true, origin:'https://promise-website.onrender.com'}));
 app.use(cors({
     credentials: true,
-    origin: 'https://savor-restaurant.vercel.app',
-    // origin: 'http://localhost:5173'
+    // origin: 'https://savor-restaurant.vercel.app',
+    origin: 'http://localhost:5173'
 }));
 
 app.use(bodyParser.json());
@@ -183,12 +183,74 @@ app.post('/api/login', async (req, res) => {
         res.cookie('accessToken', accessToken, { httpOnly: true });
 
         res.cookie('refreshToken', refreshToken, { httpOnly: true })
-        res.status(200).json({ message: 'login successful', accessToken, userId: user._id })
+        res.status(200).json({ message: 'login successful', accessToken, userId: user._id, user: {userName: user.userName, email: user.email, location: user.location, phone: user.phone} })
+        // res.status(200).json({
+        //     message: 'Login successful',
+        //     accessToken,
+        //     userId: user._id,
+        //     user: {
+        //         userName: user.userName,
+        //         email: user.email,
+        //         location: user.location,
+        //         phone: user.phone
+        //     }
+        // });
     } catch (error) {
         res.status(500).json({ message: "Error logging in" });
     }
 })
 
+app.get('/api/user/:userId', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await User.findById(userId); // Find user by ID in the database
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        // Return user profile data
+        res.status(200).json(user);
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+app.put('/api/user/:userId', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const updates = req.body;
+
+        // Find the user by ID
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Check if the provided email is different from the current email
+        if (updates.email && updates.email !== user.email) {
+            // Check if the new email already exists in the database
+            const existingUser = await User.findOne({ email: updates.email });
+            if (existingUser && existingUser._id.toString() !== userId) {
+                return res.status(400).json({ message: "Email already exists" });
+            }
+        }
+
+        // Check if the new password is provided
+        if (updates.password) {
+            // Hash the new password using bcrypt
+            const hashedPassword = await bcrypt.hash(updates.password, 10);
+            // Update the password in the updates object
+            updates.password = hashedPassword;
+        }
+
+        // Update the user document in the database
+        const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
+
+        res.status(200).json({ message: 'User information updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error updating user information', error: error.message });
+    }
+});
 
 const verifyToken = (req, res, next) => {
     const accessToken = req.cookies.accessToken

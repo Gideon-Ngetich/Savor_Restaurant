@@ -16,7 +16,10 @@ function TopNav() {
   const navigate = useNavigate()
   const isLoggedIn = useIsLoggedIn()
   const { enqueueSnackbar } = useSnackbar()
-  const link = 'https://savor-restaurant-1.onrender.com'
+  // const link = 'https://savor-restaurant-1.onrender.com'
+  const link = 'http://localhost:5500'
+
+  const [user, setUser] = useState(null)
 
   const handleCartClick = () => {
     if (isLoggedIn) {
@@ -56,19 +59,33 @@ function TopNav() {
     return () => clearInterval(intervalId);
   }, []);
 
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const userId = localStorage.getItem('UserId')
+        const response = await axios.get(`${link}/api/user/${userId}`)
+        setUser(response.data)
+      } catch (err) {
+        console.log(err.message)
+      }
+    }
+    fetchUserInfo()
+  }, [])
+
   const handleSignOut = async () => {
     try {
       await axios.post(`${link}/api/logout`);
-  
+
       localStorage.clear();
       enqueueSnackbar('Log out successful', { variant: 'success' })
+      window.location.reload()
       navigate('/');
     } catch (error) {
       console.error('Error signing out:', error);
     }
   };
 
-  
+
 
   // useEffect(() => {
   //   const fetchUserInfo = async () => {
@@ -88,13 +105,13 @@ function TopNav() {
   // }, []);
 
   return (
-    <Navbar fluid rounded className='w-full bg-transparent '>
+    <Navbar fluid rounded className=''>
       <Navbar.Brand href="#">
-        <span className="self-center whitespace-nowrap text-xl text-white font-semibold ">Savor Restaurant</span>
+        <span className="self-center whitespace-nowrap text-sm lg:text-xl xl:text-xl md:text-xl text-white font-semibold ">Savor Restaurant</span>
       </Navbar.Brand>
-      <div className="flex md:order-2 gap-2 justify-bottom items-bottom">
+      <div className="flex md:order-2 gap-1 justify-bottom items-bottom">
         <div>
-          <IoCartOutline onClick={handleCartClick} className='w-9 h-9 hover:text-slate-300 duration-100 ease-in' />
+          <IoCartOutline onClick={handleCartClick} className='w-8 h-8 lg:w-9 lg:h-9 md:w-9 md:h-9 xl:w-9 xl:h-9  hover:text-slate-300 duration-100 ease-in' />
         </div>
         <div className='bg-red-500 rounded-full relative -left-4 w-5 text-white h-5 text-sm -top-2 flex justify-center items-center'>{totalItems}</div>
         {isLoggedIn ? (
@@ -105,15 +122,23 @@ function TopNav() {
               <Avatar alt="User settings" img="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkoyUQaux4PEUmEPGc7PodeN8XbgC4aOBsug&usqp=CAUhttps://upload.wikimedia.org/wikipedia/commons/a/af/Default_avatar_profile.jpg" rounded />
             }
           >
-            <Dropdown.Header>
-              <span className="block text-sm">{userInfo.username}</span>
-              <span className="block truncate text-sm font-medium">{userInfo.email}</span>
-            </Dropdown.Header>
-            <Dropdown.Item>Profile</Dropdown.Item>
+            {user && (
+              <Dropdown.Header>
+
+                <span className="block text-sm">{user.userName}</span>
+                <span className="block truncate text-sm font-medium">{user.email}</span>
+
+              </Dropdown.Header>
+            )}
+            <Dropdown.Item>Account</Dropdown.Item>
+            <Dropdown.Item>Orders</Dropdown.Item>
+            <Dropdown.Item>Saved</Dropdown.Item>
+            <Dropdown.Item>Favourites</Dropdown.Item>
+            <Dropdown.Item>Review</Dropdown.Item>
             <Dropdown.Divider />
             <Dropdown.Item onClick={handleSignOut}>Sign out</Dropdown.Item>
           </Dropdown>
-        ) : <Link to='/login' className='px-10 bg-blue-800 text-white rounded-md font-bold text-center flex justify-center items-center hover:bg-blue-900 duration-100 ease-in'>Login</Link>}
+        ) : <Link to='/login' className='px-5 bg-blue-800 text-white rounded-md font-bold text-center flex justify-center items-center hover:bg-blue-900 duration-100 ease-in'>Login</Link>}
         <Navbar.Toggle />
 
       </div>
@@ -129,9 +154,6 @@ function TopNav() {
         <Navbar.Link href="/contacts" className='text-white'>Contacts</Navbar.Link>
 
       </Navbar.Collapse>
-      <div>
-
-      </div>
     </Navbar>
   );
 }

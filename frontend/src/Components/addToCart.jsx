@@ -12,7 +12,9 @@ const AddToCartButton = ({ userId, foodName, price,quantity = 1, withIcon }) => 
     const isLoggedIn = useIsLoggedIn();
     const navigate = useNavigate()
     const {enqueueSnackbar} = useSnackbar();
-    const link = 'https://savor-restaurant-1.onrender.com'
+    // const link = 'https://savor-restaurant-1.onrender.com'
+    const link = 'http://localhost:5500'
+
 
     const handleAddToCart = async () => {
         if (!isLoggedIn) {

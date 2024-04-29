@@ -14,9 +14,10 @@ const Cart = () => {
 
     const [cartItems, setCartItems] = useState([]);
     const [totalItems, setTotalItems] = useState(0);
-    const link = 'https://savor-restaurant-1.onrender.com'
+    // const link = 'https://savor-restaurant-1.onrender.com'
+    const link = 'http://localhost:5500'
     // const navigate = useNavigate()
-    
+
     // const {enqueSnackbar} = useSnackbar()
 
 
@@ -55,7 +56,7 @@ const Cart = () => {
         }
     };
     const handleDecreaseQuantity = async (itemId, index) => {
-        
+
         try {
             const updatedCartItems = [...cartItems];
             if (updatedCartItems[index]?.quantity > 1) { // Check if quantity exists before decrementing
@@ -103,8 +104,8 @@ const Cart = () => {
             console.error('Error removing item from cart:', error);
         }
     };
-    
-    const CalculateTotal = (price, quantity) =>{
+
+    const CalculateTotal = (price, quantity) => {
         return quantity * price
     }
 
@@ -112,9 +113,8 @@ const Cart = () => {
         return cartItems.reduce((total, item) => total + CalculateTotal(item.quantity, item.price), 0);
     };
 
-    const calculateGrandTotal = () => { 
-        const shippingFee = 50
-        const grandTotal = calculateSubtotal() + shippingFee
+    const calculateGrandTotal = () => {
+        const grandTotal = calculateSubtotal()
         return grandTotal
     }
 
@@ -135,42 +135,70 @@ const Cart = () => {
                     <div className='m-7'>
                         <h1 className='text-white font-bold font-sans text-xl'>MY CART</h1>
                     </div>
-                    <div className="overflow-x-auto">
-                        <Table className='bg-slate-900'>
-                            <Table.Head>
-                                <Table.HeadCell>Product name</Table.HeadCell>
-                                <Table.HeadCell>Quantity</Table.HeadCell>
-                                <Table.HeadCell>Price</Table.HeadCell>
-                                <Table.HeadCell>Total</Table.HeadCell>
-                                <Table.HeadCell>
-                                    <span className="sr-only">Edit</span>
-                                </Table.HeadCell>
-                            </Table.Head>
-                            <Table.Body className="divide-y bg-slate-500">
-                                {cartItems.map((item, index) => (
-                                    <Table.Row key={item._id} className="bg-slate-600 text-white dark:border-gray-700 dark:bg-gray-800">
-                                        <Table.Cell className="whitespace-nowrap font-medium text-lg text-gray-900 dark:text-white">
-                                            {item.foodName}
-                                        </Table.Cell>
-                                        <Table.Cell>
-                                            {/* <input type="number" value={item.quantity} className='w-12 p-1 outline-none' /> */}
-                                            <span className='w-24 flex gap-4' >
-                                                <button onClick={() => handleDecreaseQuantity(item._id, index)} className='bg-slate-300 rounded-md outline-non text-black text-xl px-5 hover:bg-slate-600 duration-100 ease-in'>-</button>
-                                                <input type="text" className='w-12 bg-white p-1 text-center text-black' value={item.quantity} readOnly/>
-                                                <button onClick={() => handleIncreaseQuantity(item._id, index)} className='bg-slate-300 text-black text-xl px-5 hover:bg-slate-600 duration-100 ease-in'>+</button>
-                                            </span>
-                                        </Table.Cell>
-                                        <Table.Cell>KES {item.price}</Table.Cell>
-                                        <Table.Cell>KES {CalculateTotal(item.price, item.quantity)}</Table.Cell>
-                                        <Table.Cell>
-                                            <button onClick={() => handleRemoveItem(item._id)} className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
-                                                Remove
-                                            </button>
-                                        </Table.Cell>
-                                    </Table.Row>
-                                ))}
-                            </Table.Body>
-                        </Table>
+                    <div>
+                        {cartItems.length === 0 ? (
+                            <div>
+                                <Table>
+                                    <Table.Head>
+                                        <Table.HeadCell>Product name</Table.HeadCell>
+                                        <Table.HeadCell>Quantity</Table.HeadCell>
+                                        <Table.HeadCell>Price</Table.HeadCell>
+                                        <Table.HeadCell>Total</Table.HeadCell>
+                                        <Table.HeadCell>
+                                            <span className="sr-only">Edit</span>
+                                        </Table.HeadCell>
+                                    </Table.Head>
+                                </Table>
+                                <div className='flex justify-center items-center p-10 text-xl font-bold'>
+                                    Cart is Empty
+                                </div>
+                                <div>
+                                    <Link to={'/menu'} className='flex justify-center items-center p-10'>
+                                        <button className='w-3/4 px-10 py-3 bg-blue-500 text-white lg:w-1/2'>Menu</button>
+                                    </Link>
+                                </div>
+                            </div>
+
+
+
+                        ) : (
+                            <Table className='bg-slate-900'>
+                                <Table.Head>
+                                    <Table.HeadCell>Product name</Table.HeadCell>
+                                    <Table.HeadCell>Quantity</Table.HeadCell>
+                                    <Table.HeadCell>Price</Table.HeadCell>
+                                    <Table.HeadCell>Total</Table.HeadCell>
+                                    <Table.HeadCell>
+                                        <span className="sr-only">Edit</span>
+                                    </Table.HeadCell>
+                                </Table.Head>
+                                <Table.Body className="divide-y bg-slate-500">
+                                    {cartItems.map((item, index) => (
+                                        <Table.Row key={item._id} className="bg-slate-600 text-white dark:border-gray-700 dark:bg-gray-800">
+                                            <Table.Cell className="whitespace-nowrap font-medium text-lg text-gray-900 dark:text-white">
+                                                {item.foodName}
+                                            </Table.Cell>
+                                            <Table.Cell className='flex justify-start w-auto items-center py-2 px-1 m-0'>
+                                                {/* <input type="number" value={item.quantity} className='w-12 p-1 outline-none' /> */}
+                                                <span className='w-10 flex gap-0 p-0 m-0' >
+                                                    <button onClick={() => handleDecreaseQuantity(item._id, index)} className='bg-slate-300 outline-non text-black text-xl py-2 px-3 hover:bg-slate-600 duration-100 ease-in'>-</button>
+                                                    <input type="text" className='w-9 bg-white p-1 text-center text-black' value={item.quantity} readOnly />
+                                                    <button onClick={() => handleIncreaseQuantity(item._id, index)} className='bg-slate-300 text-black text-xl py-2 px-3 hover:bg-slate-600 duration-100 ease-in'>+</button>
+                                                </span>
+                                            </Table.Cell>
+                                            <Table.Cell>KES {item.price}</Table.Cell>
+                                            <Table.Cell>KES {CalculateTotal(item.price, item.quantity)}</Table.Cell>
+                                            <Table.Cell className='text-center'>
+                                                <button onClick={() => handleRemoveItem(item._id)} className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+                                                    Remove
+                                                </button>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    ))}
+                                </Table.Body>
+                            </Table>
+                        )}
+
                     </div>
                 </div>
                 <div>
@@ -182,21 +210,24 @@ const Cart = () => {
                     </div>
                     <div className='flex flex-col gap-5'>
                         <span className='flex justify-between text-xl text-white'>
-                            <span>Subtotal</span>
+                            <span>Item(s)</span>
                             <span>KES {calculateSubtotal()}</span>
                         </span>
-                        <span className='flex justify-between text-lg'>
-                            <span>Shipping Fee</span>
-                            <span>KES 50</span>
-                        </span>
                         <span className='flex justify-between text-2xl text-white border-y p-3'>
-                            <span>Grand Total</span>
+                            <span>Subtotal Total</span>
                             <span>KES {calculateGrandTotal()}</span>
                         </span>
                         <span className='flex justify-center items-center'>
-                            <Link to={'/cart/checkout'}>
-                                <button className='bg-blue-500 w-40 h-10 text-black hover:bg-blue-700 font-bold text-lg duration-100 ease-in'>Checkout</button>
-                            </Link>
+                            {cartItems.length === 0 ? (
+                                <div>
+
+                                </div>
+                            ) : (
+                                <Link to={'/cart/checkout'}>
+                                    <button className='bg-blue-500 w-40 h-10 text-white hover:bg-blue-700 font-bold text-lg duration-100 ease-in'>Checkout</button>
+                                </Link>
+                            )}
+
                         </span>
                     </div>
 

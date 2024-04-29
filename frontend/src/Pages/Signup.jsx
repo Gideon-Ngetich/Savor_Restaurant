@@ -20,7 +20,7 @@ const Signup = () => {
     const { enqueueSnackbar } = useSnackbar();
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate()
-    const link = 'https://savor-restaurant-1.onrender.com'
+    const link = 'http://localhost:5500'
 
     useEffect(() => {
         setTimeout(() => setLoading(false), 3300)

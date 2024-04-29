@@ -12,71 +12,73 @@ const Checkout = () => {
     const [total, setTotal] = useState(0);
     const [grandTotal, setGrandTotal] = useState(0);
     const [phone, setPhone] = useState()
-    const [isLoading,setLoading] = useState(false)
+    const [isLoading, setLoading] = useState(false)
     const [error, setError] = useState(null)
-    const link = 'https://savor-restaurant-1.onrender.com'
-  
+    // const link = 'https://savor-restaurant-1.onrender.com'
+    const link = 'http://localhost:5500'
+
+
     useEffect(() => {
-      const fetchUpdatedCartItems = async () => {
-        const userId = localStorage.getItem('UserId');
-  
-        try {
-          // Fetch cart items for the user after updating quantities
-          const response = await axios.get(`${link}/api/cart/${userId}`);
-          setCartItems(response.data);
-          // Calculate total when cart items are fetched
-          const calculatedTotal = calculateTotal(response.data);
-          setTotal(calculatedTotal);
-        } catch (error) {
-          console.error('Error fetching updated cart items:', error);
-          setCartItems([]); // Set cart items to empty array in case of error
-          setTotal(0); // Set total to 0 in case of error
-        }
-      };
-  
-      fetchUpdatedCartItems();
+        const fetchUpdatedCartItems = async () => {
+            const userId = localStorage.getItem('UserId');
+
+            try {
+                // Fetch cart items for the user after updating quantities
+                const response = await axios.get(`${link}/api/cart/${userId}`);
+                setCartItems(response.data);
+                // Calculate total when cart items are fetched
+                const calculatedTotal = calculateTotal(response.data);
+                setTotal(calculatedTotal);
+            } catch (error) {
+                console.error('Error fetching updated cart items:', error);
+                setCartItems([]); // Set cart items to empty array in case of error
+                setTotal(0); // Set total to 0 in case of error
+            }
+        };
+
+        fetchUpdatedCartItems();
     }, []);
-  
+
     useEffect(() => {
-      // Calculate grand total when total is updated
-      const calculatedGrandTotal = calculateGrandTotal(total);
-      setGrandTotal(calculatedGrandTotal);
+        // Calculate grand total when total is updated
+        const calculatedGrandTotal = calculateGrandTotal(total);
+        setGrandTotal(calculatedGrandTotal);
     }, [total]);
-  
+
     const calculateTotal = (cartItems) => {
-      let total = 0;
-      cartItems.forEach((item) => {
-        total += item.price * item.quantity;
-      });
-      return total;
-    };
-  
-    const calculateGrandTotal = (total) => {
-      const deliveryFee = 100;
-      const customFee = 100;
-      return total + deliveryFee + customFee;
+        let total = 0;
+        cartItems.forEach((item) => {
+            total += item.price * item.quantity;
+        });
+        return total;
     };
 
-    
-    const handlePayment =(e) =>{
+    const calculateGrandTotal = (total) => {
+        const deliveryFee = 100;
+        const customFee = 100;
+        return total + deliveryFee + customFee;
+    };
+
+
+    const handlePayment = (e) => {
         e.preventDefault();
         const grandTotal = calculateGrandTotal(total)
         setLoading(true)
-        axios.post('https:/savor-restaurant-1.onrender.com/api/stk', {
-            amount: grandTotal,phone
+        axios.post(`${link}/api/stk`, {
+            amount: grandTotal, phone
         })
-        .then((res) =>{
-            console.log(res)
-            console.log('Waiting for response')
-        }).catch((err) =>{
-            console.error(err)
-            setError(err.message)
-        })
-        .finally(() =>{
-            setLoading(false)
-        })
+            .then((res) => {
+                console.log(res)
+                console.log('Waiting for response')
+            }).catch((err) => {
+                console.error(err)
+                setError(err.message)
+            })
+            .finally(() => {
+                setLoading(false)
+            })
     }
-  
+
     return (
         <>
 
@@ -124,30 +126,44 @@ const Checkout = () => {
                         </div>
                     </div>
                     <div className='h-auto bg-slate-600 bg-opacity-10 shadow-md text-white'>
-                        <h2 className='w-full h-10 flex justify-start items-center border-b-2 px-5 border-slate-500 text-white font-bold'>Items</h2>
-                        {cartItems.map((item) => (
-                            <div className='flex px-5 py-3 w-1/2 justify-between'>
-                                <div>{item.foodName}</div>
-                                <div className=''>Qty: {item.quantity}</div>
+                        {cartItems.length === 0 ? (
+                            <div>
+                                <h2 className='w-full h-10 flex justify-start items-center border-b-2 px-5 border-slate-500 text-white font-bold'>Items</h2>
+
+                                <div className='p-10 text-xl font-bold text-center text-slate-400'>
+                                    No items in your cart
+                                </div>
                             </div>
-                        ))}
+
+                        ) : (
+                            <div>
+                                <h2 className='w-full h-10 flex justify-start items-center border-b-2 px-5 border-slate-500 text-white font-bold'>Items</h2>
+                                {cartItems.map((item) => (
+                                    <div className='flex px-5 py-3 w-full xl:w-1/2 md:w-1/2 lg:w-1/2 justify-between'>
+                                        <div>{item.foodName}</div>
+                                        <div className=''>Qty: {item.quantity}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+
 
                     </div>
                     <div>
                         <Link to={'/cart'} className='flex justify-center items-center'>
-                            <button className='w-1/2 px-10 py-3 bg-blue-500 text-white'>Modify Cart</button>
+                            <button className='w-3/4 px-10 py-3 bg-blue-500 text-white lg:w-1/2'>Modify Cart</button>
                         </Link>
 
                     </div>
 
                     <div className='h-36 bg-slate-600 bg-opacity-10 shadow-md'>
                         <h2 className='w-full h-10 flex justify-start items-center border-b-2 px-5 border-slate-500 text-white font-bold'>Payment Method(M-Pesa)</h2>
-                        <span className='p-3 flex flex-col gap-3'>
+                        <span className='p-3 flex flex-col gap-3 justify-center items-center lg:justify-start lg:items-start xl:justify-start xl:items-start md:justify-start md:items-start'>
                             <label htmlFor="" className='text-white'>Enter phone Number</label>
-                            <input id='phone' type="tel" className='w-52 p-2 outline-none' onChange={(e) => setPhone(e.target.value)}/>
+                            <input id='phone' type="tel" className='w-52 p-2 outline-none' onChange={(e) => setPhone(e.target.value)} />
                         </span>
                     </div>
-                </div>
+                </div >
                 <div className='flex flex-col m-0 lg:m-10 xl:m-10 bg-slate-600 bg-opacity-10 shadow-md w-full lg:w-1/4 xl:w-1/4 h-1/2'>
                     <div>
                         <h2 className='w-full h-10 flex justify-start items-center border-b-2 px-5 border-slate-500 text-white font-bold'>Order Summary</h2>
@@ -180,10 +196,10 @@ const Checkout = () => {
                         <button className='px-10 py-3 bg-red-500 text-white' onClick={handlePayment}>Confirm Order</button>
                     </div>
                 </div>
-            </div>
+            </div >
             <div>
                 {isLoading && <Preloader />}
-                {error && <Error message={error}/>}
+                {error && <Error message={error} />}
             </div>
         </>
     )
