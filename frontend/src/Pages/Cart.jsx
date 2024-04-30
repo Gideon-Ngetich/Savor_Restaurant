@@ -137,7 +137,7 @@ const Cart = () => {
                     </div>
                     <div>
                         {cartItems.length === 0 ? (
-                            <div>
+                            <div className='overflow-x-auto'>
                                 <Table>
                                     <Table.Head>
                                         <Table.HeadCell>Product name</Table.HeadCell>
@@ -162,41 +162,43 @@ const Cart = () => {
 
 
                         ) : (
-                            <Table className='bg-slate-900'>
-                                <Table.Head>
-                                    <Table.HeadCell>Product name</Table.HeadCell>
-                                    <Table.HeadCell>Quantity</Table.HeadCell>
-                                    <Table.HeadCell>Price</Table.HeadCell>
-                                    <Table.HeadCell>Total</Table.HeadCell>
-                                    <Table.HeadCell>
-                                        <span className="sr-only">Edit</span>
-                                    </Table.HeadCell>
-                                </Table.Head>
-                                <Table.Body className="divide-y bg-slate-500">
-                                    {cartItems.map((item, index) => (
-                                        <Table.Row key={item._id} className="bg-slate-600 text-white dark:border-gray-700 dark:bg-gray-800">
-                                            <Table.Cell className="whitespace-nowrap font-medium text-lg text-gray-900 dark:text-white">
-                                                {item.foodName}
-                                            </Table.Cell>
-                                            <Table.Cell className='flex justify-start w-auto items-center py-2 px-1 m-0'>
-                                                {/* <input type="number" value={item.quantity} className='w-12 p-1 outline-none' /> */}
-                                                <span className='w-10 flex gap-0 p-0 m-0' >
-                                                    <button onClick={() => handleDecreaseQuantity(item._id, index)} className='bg-slate-300 outline-non text-black text-xl py-2 px-3 hover:bg-slate-600 duration-100 ease-in'>-</button>
-                                                    <input type="text" className='w-9 bg-white p-1 text-center text-black' value={item.quantity} readOnly />
-                                                    <button onClick={() => handleIncreaseQuantity(item._id, index)} className='bg-slate-300 text-black text-xl py-2 px-3 hover:bg-slate-600 duration-100 ease-in'>+</button>
-                                                </span>
-                                            </Table.Cell>
-                                            <Table.Cell>KES {item.price}</Table.Cell>
-                                            <Table.Cell>KES {CalculateTotal(item.price, item.quantity)}</Table.Cell>
-                                            <Table.Cell className='text-center'>
-                                                <button onClick={() => handleRemoveItem(item._id)} className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
-                                                    Remove
-                                                </button>
-                                            </Table.Cell>
-                                        </Table.Row>
-                                    ))}
-                                </Table.Body>
-                            </Table>
+                            <div className='overflow-x-auto'>
+                                <Table className='bg-slate-900'>
+                                    <Table.Head>
+                                        <Table.HeadCell>Product name</Table.HeadCell>
+                                        <Table.HeadCell>Quantity</Table.HeadCell>
+                                        <Table.HeadCell>Price</Table.HeadCell>
+                                        <Table.HeadCell>Total</Table.HeadCell>
+                                        <Table.HeadCell>
+                                            <span className="sr-only">Edit</span>
+                                        </Table.HeadCell>
+                                    </Table.Head>
+                                    <Table.Body className="divide-y bg-slate-500">
+                                        {cartItems.map((item, index) => (
+                                            <Table.Row key={item._id} className="bg-slate-600 text-white dark:border-gray-700 dark:bg-gray-800">
+                                                <Table.Cell className="whitespace-nowrap font-medium text-lg text-gray-900 dark:text-white">
+                                                    {item.foodName}
+                                                </Table.Cell>
+                                                <Table.Cell className='flex justify-start w-auto items-center py-2 px-1 m-0'>
+                                                    {/* <input type="number" value={item.quantity} className='w-12 p-1 outline-none' /> */}
+                                                    <span className='w-10 flex gap-0 p-0 m-0' >
+                                                        <button onClick={() => handleDecreaseQuantity(item._id, index)} className='bg-slate-300 outline-non text-black text-xl py-2 px-3 hover:bg-slate-600 duration-100 ease-in'>-</button>
+                                                        <input type="text" className='w-9 bg-white p-1 text-center text-black' value={item.quantity} readOnly />
+                                                        <button onClick={() => handleIncreaseQuantity(item._id, index)} className='bg-slate-300 text-black text-xl py-2 px-3 hover:bg-slate-600 duration-100 ease-in'>+</button>
+                                                    </span>
+                                                </Table.Cell>
+                                                <Table.Cell>KES {item.price}</Table.Cell>
+                                                <Table.Cell>KES {CalculateTotal(item.price, item.quantity)}</Table.Cell>
+                                                <Table.Cell className='text-center'>
+                                                    <button onClick={() => handleRemoveItem(item._id)} className="font-medium text-cyan-600 hover:underline dark:text-cyan-500">
+                                                        Remove
+                                                    </button>
+                                                </Table.Cell>
+                                            </Table.Row>
+                                        ))}
+                                    </Table.Body>
+                                </Table>
+                            </div>
                         )}
 
                     </div>

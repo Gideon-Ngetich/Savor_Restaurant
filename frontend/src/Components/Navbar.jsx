@@ -30,7 +30,6 @@ function TopNav() {
   }
 
   const [totalItems, setTotalItems] = useState(0);
-  const [userInfo, setUserInfo] = useState({});
   useEffect(() => {
     const fetchTotalItems = async () => {
       try {
@@ -130,7 +129,9 @@ function TopNav() {
 
               </Dropdown.Header>
             )}
-            <Dropdown.Item>Account</Dropdown.Item>
+            <Dropdown.Item className='text-white'>
+              <Link to='/profile' >Account</Link>
+            </Dropdown.Item>
             <Dropdown.Item>Orders</Dropdown.Item>
             <Dropdown.Item>Saved</Dropdown.Item>
             <Dropdown.Item>Favourites</Dropdown.Item>

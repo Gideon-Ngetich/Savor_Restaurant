@@ -10,8 +10,9 @@ import Signup from './Pages/Signup'
 import Gallery from './Pages/Gallery'
 import Cart from './Pages/Cart'
 import Admin from './Pages/Admin'
-import userProfile from './Pages/userProfile'
+import Profile from './Pages/Profile'
 import Checkout from './Pages/Checkout'
+import UpdateInfo from './Pages/UpdateInfo'
 // import User from './Components/User'
 // import Favourites from './Components/Favourites'
 // import Review from './Components/Review'
@@ -38,7 +39,9 @@ function App() {
         <Route path='/cart' Component={Cart} />
         <Route path='/cart/Checkout' Component={Checkout} />
         <Route path='/admin' Component={Admin} />
-        <Route path='/profile' Component={userProfile} />
+        <Route path='/profile' Component={Profile} />
+        <Route path='/profile/updateinfo' Component={UpdateInfo} />
+
         {/* <Route path='/profile/user' Component={<User />} /> */}
       </Routes>
 
