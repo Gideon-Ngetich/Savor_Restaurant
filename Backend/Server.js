@@ -616,7 +616,7 @@ app.post('/api/cart/removeDuplicates', async (req, res) => {
             PartyA: `254${phone}`,
             PartyB: shortcode,
             PhoneNumber: `254${phone}`,
-            CallBackURL: "https://webhook.site/4584f792-6daf-45c6-82a3-59437923a10a/api/callback",
+            CallBackURL: "https://savor-restaurant.vercel.app/api/callback",
             AccountReference: `paid 254${phone}`,
             TransactionDesc: "Test"
         }
