@@ -183,7 +183,7 @@ app.post('/api/login', async (req, res) => {
         res.cookie('accessToken', accessToken, { httpOnly: true });
 
         res.cookie('refreshToken', refreshToken, { httpOnly: true })
-        res.status(200).json({ message: 'login successful', accessToken, userId: user._id, user: {userName: user.userName, email: user.email, location: user.location, phone: user.phone} })
+        res.status(200).json({ message: 'login successful', accessToken, userId: user._id, user: { userName: user.userName, email: user.email, location: user.location, phone: user.phone } })
         // res.status(200).json({
         //     message: 'Login successful',
         //     accessToken,
@@ -217,41 +217,70 @@ app.get('/api/user/:userId', async (req, res) => {
 
 app.put('/api/user/:userId', async (req, res) => {
     try {
-        const userId = req.params.userId;
-        const updates = req.body;
-
-        // Find the user by ID
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
+      const userId = req.params.userId;
+      const updates = req.body;
+        
+      console.log(updates)
+      // Find the user by ID
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      // Check if the provided email is different from the current email
+      if (updates.email && updates.email !== user.email) {
+        // Check if the new email already exists in the database
+        const existingUser = await User.findOne({ email: updates.email });
+        if (existingUser && existingUser._id.toString() !== userId) {
+          return res.status(400).json({ message: "Email already exists" });
         }
-
-        // Check if the provided email is different from the current email
-        if (updates.email && updates.email !== user.email) {
-            // Check if the new email already exists in the database
-            const existingUser = await User.findOne({ email: updates.email });
-            if (existingUser && existingUser._id.toString() !== userId) {
-                return res.status(400).json({ message: "Email already exists" });
-            }
+      }
+      // Check if the new password is provided
+      if (updates.newPassword) {
+        // Verify if the old password matches the stored hashed password
+        const isMatch = await bcrypt.compare(updates.oldPassword, user.password);
+        console.log(updates.oldPassword)
+        if (!isMatch) {
+          return res.status(400).json({ message: "Old password is incorrect" });
         }
-
-        // Check if the new password is provided
-        if (updates.password) {
-            // Hash the new password using bcrypt
-            const hashedPassword = await bcrypt.hash(updates.password, 10);
-            // Update the password in the updates object
-            updates.password = hashedPassword;
-        }
-
-        // Update the user document in the database
-        const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
-
-        res.status(200).json({ message: 'User information updated successfully' });
+  
+        // Hash the new password using bcrypt
+        const hashedPassword = await bcrypt.hash(updates.newPassword, 10);
+        // Update the password in the updates object
+        updates.password = hashedPassword;
+      }
+  
+      // Remove the old password and new password from updates
+    //   delete updates.oldPassword;
+    //   delete updates.newPassword;
+  
+      // Update the user document in the database
+      const updatedUser = await User.findByIdAndUpdate(userId, updates, { new: true });
+  
+      res.status(200).json({ message: 'User information updated successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Error updating user information', error: error.message });
+      res.status(500).json({ message: 'Error updating user information', error: error.message });
     }
-});
+  });
 
+  app.post('/api/user/validate-password', async (req, res) => {
+    try {
+      const { userId, password } = req.body;
+  
+      // Find the user by ID
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      // Verify if the provided password matches the stored hashed password
+      const isMatch = await bcrypt.compare(password, user.password);
+      console.log(isMatch)
+      res.json({ valid: isMatch });
+    } catch (error) {
+      res.status(500).json({ message: 'Error validating password', error: error.message });
+    }
+  });
 const verifyToken = (req, res, next) => {
     const accessToken = req.cookies.accessToken
 
@@ -561,89 +590,98 @@ app.post('/api/cart/removeDuplicates', async (req, res) => {
     }
 });
 
-    const generateToken = async (req, res, next) => {
-        const secret = process.env.MPESA_SECRET_KEY;
-        const consumer = process.env.MPESA_CONSUMER_KEY;
+const generateToken = async (req, res, next) => {
+    const secret = process.env.MPESA_SECRET_KEY;
+    const consumer = process.env.MPESA_CONSUMER_KEY;
 
-        const auth = Buffer.from(`${consumer}:${secret}`).toString('base64');
-        try {
-            const response = await axios.get('https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', {
-                headers: {
-                    'Authorization': `Basic ${auth}`
-                }
-            });
-
-            // console.log(response.data.access_token);
-            console.log(response.data.access_token)
-            return response.data.access_token; // Pass token to the next middleware
-            // res.status(200),json({token: response.data.access_token})
-            // next();
-        } catch (error) {
-            console.error(error.message);
-            // res.status(400).json({ error: error.message });
-        }
-    };
-
-    app.get('/api/token', (req,res) =>{
-        generateToken()
-    })
-    app.post('/api/stk', async (req, res) => {
-        const phone = req.body.phone.substring(1);
-        const amount = req.body.amount;
-        const token = await generateToken() // Retrieve token from the request object
-        const shortcode = process.env.MPESA_TILL;
-        const passkey = process.env.MPESA_PASSKEY;
-        const url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
-
-        const date = new Date();
-        const timestamp = date.getFullYear() +
-            ("0" + (date.getMonth() + 1)).slice(-2) +
-            ("0" + date.getDate()).slice(-2) +
-            ("0" + date.getHours()).slice(-2) +
-            ("0" + date.getMinutes()).slice(-2) +
-            ("0" + date.getSeconds()).slice(-2);
-
-
-
-        const password = Buffer.from(shortcode + passkey + timestamp).toString("base64");
-
-        const data = {
-            BusinessShortCode: shortcode,
-            Password: password,
-            Timestamp: timestamp,
-            TransactionType: "CustomerPayBillOnline",
-            Amount: amount,
-            PartyA: `254${phone}`,
-            PartyB: shortcode,
-            PhoneNumber: `254${phone}`,
-            CallBackURL: "https://webhook.site/4584f792-6daf-45c6-82a3-59437923a10a/api/callback",
-            AccountReference: `paid 254${phone}`,
-            TransactionDesc: "Test"
-        }
-
-        await axios.post(url, data, {
+    const auth = Buffer.from(`${consumer}:${secret}`).toString('base64');
+    try {
+        const response = await axios.get('https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials', {
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Authorization': `Basic ${auth}`
             }
-        }).then((data) => {
-            // console.log(data)
-            res.status(200).json(data.data)
-        }).catch((err) => {
-            console.log(err.message)
-            res.status(400).json(err.message)
-        })
-    });
+        });
+
+        // console.log(response.data.access_token);
+        console.log(response.data.access_token)
+        return response.data.access_token; // Pass token to the next middleware
+        // res.status(200),json({token: response.data.access_token})
+        // next();
+    } catch (error) {
+        console.error(error.message);
+        // res.status(400).json({ error: error.message });
+    }
+};
+
+app.get('/api/token', (req, res) => {
+    generateToken()
+})
+app.post('/api/stk', async (req, res) => {
+    const phone = req.body.phone.substring(1);
+    const amount = req.body.amount;
+    const token = await generateToken() // Retrieve token from the request object
+    const shortcode = process.env.MPESA_TILL;
+    const passkey = process.env.MPESA_PASSKEY;
+    const url = "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
+
+    const date = new Date();
+    const timestamp = date.getFullYear() +
+        ("0" + (date.getMonth() + 1)).slice(-2) +
+        ("0" + date.getDate()).slice(-2) +
+        ("0" + date.getHours()).slice(-2) +
+        ("0" + date.getMinutes()).slice(-2) +
+        ("0" + date.getSeconds()).slice(-2);
 
 
-    app.post('/callback', (req, res) => {
-        const callbackData = req.body;
 
-        if (!callbackData.Body || !callbackData.Body.stkCallback || !callbackData.Body.stkCallback.callbackMetadata) {
-            console.log("Invalid callback data format");
-            return res.json("ok");
+    const password = Buffer.from(shortcode + passkey + timestamp).toString("base64");
+
+    const data = {
+        BusinessShortCode: shortcode,
+        Password: password,
+        Timestamp: timestamp,
+        TransactionType: "CustomerPayBillOnline",
+        Amount: amount,
+        PartyA: `254${phone}`,
+        PartyB: shortcode,
+        PhoneNumber: `254${phone}`,
+        CallBackURL: "https://7b18-102-211-145-33.ngrok-free.app/api/callback",
+        AccountReference: `paid 254${phone}`,
+        TransactionDesc: "Test"
+    }
+
+    await axios.post(url, data, {
+        headers: {
+            'Authorization': `Bearer ${token}`
         }
+    }).then((data) => {
+        // console.log(data)
+        res.status(200).json(data.data)
+    }).catch((err) => {
+        console.log(err.message)
+        res.status(400).json(err.message)
+    })
+});
 
-        const metadata = callbackData.Body.stkCallback.callbackMetadata.Item;
+
+app.post('/api/callback', (req, res) => {
+    const callbackData = req.body;
+
+    console.log(callbackData); // Log the entire callback data for debugging
+
+    if (!callbackData || !callbackData.Body || !callbackData.Body.stkCallback) {
+        console.log("Invalid callback data format");
+        return res.json("ok");
+    }
+
+    const stkCallbackData = callbackData.Body.stkCallback;
+
+    // Check if the result code is 0 (success)
+    if (stkCallbackData.ResultCode === 0) {
+        console.log("STK push succeeded");
+
+        // Extract relevant data from stkCallbackData
+        const metadata = stkCallbackData.CallbackMetadata.Item;
 
         // Extracting values from the callback metadata
         const amountIndex = metadata.findIndex(item => item.Name === 'Amount');
@@ -670,13 +708,17 @@ app.post('/api/cart/removeDuplicates', async (req, res) => {
         });
 
         payment.save().then((data) => {
-            console.log(payment)
+            console.log(payment);
             console.log({ message: 'Data sent successfully' });
         }).catch((err) => {
             console.log(err.message);
         });
+    } else {
+        console.log("STK push failed");
+    }
 
-        res.json("ok");
-    });
+    res.json("ok");
+});
 
-    export default JWT_SECRET_KEY
+
+export default JWT_SECRET_KEY

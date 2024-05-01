@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from 'react'
 import TopNav from '../Components/Navbar'
 import axios from 'axios';
-import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa"
 
 const UpdateInfo = () => {
   const [loading, setLoading] = useState(true);
@@ -11,7 +11,9 @@ const UpdateInfo = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
-  const [password, setPassword] = useState('');
+  const [userName, setUsername] = useState('')
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -44,7 +46,13 @@ const UpdateInfo = () => {
       setOldPassword(value);
     } else if (name === 'newPassword') {
       setNewPassword(value);
-    } else {
+    } else if (name === 'email') {
+      setEmail(value)
+    } else if (name === 'phone') {
+      setPhone(parseInt(value))
+    } else if (name === 'username'){
+      setUsername(value)
+    }else {
       setUpdatedUser(prevState => ({
         ...prevState,
         [name]: value
@@ -55,23 +63,28 @@ const UpdateInfo = () => {
   const handleSubmit = async (e) => {
     const userId = localStorage.getItem('UserId');
     e.preventDefault();
+
     try {
-      const response = await axios.get(`${link}/api/user/${userId}`);
-      const email = response.data.email
-      console.log(email)
-      const validate = await axios.post(`${link}/api/login`, { email, password }, { withCredentials: true });
-      if (oldPassword === validate.data.password) {
-        if(newPassword !== confirmPassword){
-          alert('password do not match')
-        }
-        // Old password matches, update the password
-        await axios.put(`${link}/api/user/${userId}`, { ...updatedUser, password: newPassword });
+      // Check if the old password is equal to the new password
+      if (oldPassword === newPassword) {
+        alert('Old password and new password cannot be the same');
+        return;
+      }
+
+      // Make a POST request to validate the old password before updating
+      const response = await axios.post(`${link}/api/user/validate-password`, {
+        userId,
+        password: oldPassword,
+      });
+      if (response.data.valid) {
+        // Update the password
+        const userData = { oldPassword, newPassword, userName, email, location, phone }
+        console.log(userData)
+        await axios.put(`${link}/api/user/${userId}`, userData);
         alert('Password updated successfully!');
         // Optionally, you can redirect the user or perform other actions after updating
-      } else if (user.password === newPassword) {
-        alert("New password cannot be the same as old password")
       } else {
-        alert('Old password does not match!');
+        alert('Old password is incorrect');
       }
     } catch (error) {
       console.error('Error updating user info:', error);
@@ -93,7 +106,7 @@ const UpdateInfo = () => {
     setShowConfirmPassword((prevShowPassword) => !prevShowPassword);
 
   };
-  
+
 
   const handleConfirmPasswordChange = (event) => {
     setConfirmPassword(event.target.value);
@@ -123,7 +136,7 @@ const UpdateInfo = () => {
                       </label>
                       <span className="flex justify-center items-center w-full outline-none bg-grey-300">
 
-                        <input type="text" defaultValue={user.userName || ''} placeholder="Full Name" onChange={handleChange} required
+                        <input type="text" name='username' defaultValue={user.userName} placeholder="Full Name" onChange={handleChange} required
                           class="peer h-full text-white w-full border-b border-blue-gray-200 bg-transparent pt-2 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" />
                       </span>
                     </div>
@@ -133,7 +146,7 @@ const UpdateInfo = () => {
                       </label>
                       <span className="flex justify-center items-center w-full outline-none bg-grey-300">
 
-                        <input type="email" defaultValue={user.email || ''} placeholder="Email address" required
+                        <input type="email" name='email' defaultValue={user.email} onChange={handleChange} placeholder="Email address" required
                           class="peer h-full text-white w-full border-b border-blue-gray-200 bg-transparent pt-2 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" />
                       </span>
                     </div>
@@ -145,7 +158,7 @@ const UpdateInfo = () => {
                       </label>
                       <span className="flex justify-center items-center w-full outline-none bg-grey-300">
 
-                        <input type="tel" defaultValue={user.phone || ''} placeholder="Phone Number" onChange={handleChange} required
+                        <input type="tel" name='phone' defaultValue={user.phone} placeholder="Phone Number" onChange={handleChange} required
                           class="peer h-full text-white w-full border-b border-blue-gray-200 bg-transparent pt-2 pb-1.5 font-sans text-sm font-normal text-blue-gray-700 outline outline-0 transition-all placeholder-shown:border-blue-gray-200 focus:border-gray-900 focus:outline-0 disabled:border-0 disabled:bg-blue-gray-50" />
                       </span>
                     </div>

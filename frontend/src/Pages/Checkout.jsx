@@ -60,24 +60,80 @@ const Checkout = () => {
     };
 
 
-    const handlePayment = (e) => {
+    // const handlePayment = (e) => {
+    //     e.preventDefault();
+    //     const grandTotal = calculateGrandTotal(total)
+    //     setLoading(true)
+    //     axios.post(`${link}/api/stk`, {
+    //         amount: grandTotal, phone
+    //     })
+    //         .then((res) => {
+    //             console.log(res)
+    //             console.log('Waiting for response')
+    //         }).catch((err) => {
+    //             console.error(err)
+    //             setError(err.message)
+    //         })
+    //         .finally(() => {
+    //             setLoading(false)
+    //         })
+    // }
+
+    const handlePayment = async (e) => {
         e.preventDefault();
-        const grandTotal = calculateGrandTotal(total)
-        setLoading(true)
-        axios.post(`${link}/api/stk`, {
-            amount: grandTotal, phone
-        })
-            .then((res) => {
-                console.log(res)
-                console.log('Waiting for response')
-            }).catch((err) => {
-                console.error(err)
-                setError(err.message)
+
+        try {
+            const grandTotal = calculateGrandTotal(total)
+            setLoading(true)
+            const response = await axios.post(`${link}/api/stk`, {
+                amount: grandTotal, phone
             })
-            .finally(() => {
-                setLoading(false)
-            })
-    }
+
+            console.log(response.data); // Log STK initiation response
+
+            // Display waiting message
+            console.log('Waiting for STK push result...');
+
+        } catch (error) {
+            console.error('Error handling STK push:', error);
+            alert('Error handling STK push');
+            return;
+        }
+
+        // Define a function to handle the callback
+        const handleCallback = async () => {
+            try {
+                // Make a POST request to fetch callback data
+                const callbackResponse = await axios.post(`${link}/api/callback`, {
+                    // Add any necessary data to send in the request body
+                });
+
+                // Process the callback response
+                console.log(callbackResponse.data); // Log the callback data
+
+                // Extract the result code from the callback data
+                const resultCode = callbackResponse.data.Body.stkCallback.ResultCode;
+
+                // Check if the STK push was successful
+                if (resultCode === 0) {
+                    // Payment successful
+                    console.log('Payment successful');
+                    alert('Payment successful!');
+                } else {
+                    // Payment failed
+                    console.log('Payment failed');
+                    alert('Payment failed!');
+                }
+            } catch (error) {
+                console.error('Error handling callback:', error);
+                alert('Error handling callback');
+            }
+        };
+
+        // Call the handleCallback function after a delay (e.g., 10 seconds)
+        setTimeout(handleCallback, 10000); // Adjust the delay as needed
+    };
+
 
     return (
         <>
