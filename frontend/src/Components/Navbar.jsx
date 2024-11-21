@@ -107,13 +107,13 @@ function TopNav() {
   return (
     <Navbar fluid rounded className=''>
       <Navbar.Brand href="#">
-        <span className="self-center whitespace-nowrap text-sm lg:text-xl xl:text-xl md:text-xl text-white font-semibold ">Savor Restaurant</span>
+        <span className="self-center whitespace-nowrap text-sm lg:text-xl xl:text-xl md:text-xl text-black font-semibold ">Savor Restaurant</span>
       </Navbar.Brand>
       <div className="flex md:order-2 gap-1 justify-bottom items-bottom">
         <div>
           <IoCartOutline onClick={handleCartClick} className='w-8 h-8 lg:w-9 lg:h-9 md:w-9 md:h-9 xl:w-9 xl:h-9  hover:text-slate-300 duration-100 ease-in' />
         </div>
-        <div className='bg-red-500 rounded-full relative -left-4 w-5 text-white h-5 text-sm -top-2 flex justify-center items-center'>{totalItems}</div>
+        <div className='bg-red-500 rounded-full relative -left-4 w-5 text-black h-5 text-sm -top-2 flex justify-center items-center'>{totalItems}</div>
         {isLoggedIn ? (
           <Dropdown
             arrowIcon={false}
@@ -138,7 +138,7 @@ function TopNav() {
             <Dropdown.Divider />
             <Dropdown.Item onClick={handleSignOut}>Sign out</Dropdown.Item>
           </Dropdown>
-        ) : <Link to='/login' className='px-5 bg-blue-800 text-white rounded-md font-bold text-center flex justify-center items-center hover:bg-blue-900 duration-100 ease-in'>Login</Link>}
+        ) : <Link to='/login' className='px-5 bg-blue-800 text-black rounded-md font-bold text-center flex justify-center items-center hover:bg-blue-900 duration-100 ease-in'>Login</Link>}
         <Navbar.Toggle />
 
       </div>
@@ -147,11 +147,11 @@ function TopNav() {
         <Navbar.Link href="/" className='text-white'>
           Home
         </Navbar.Link>
-        <Navbar.Link href="/menu" className='text-white'>Menu</Navbar.Link>
-        <Navbar.Link href="/about" className='text-white'>About</Navbar.Link>
-        <Navbar.Link href="/reservation" className='text-white'>Reservation</Navbar.Link>
-        <Navbar.Link href="/gallery" className='text-white'>Gallery</Navbar.Link>
-        <Navbar.Link href="/contacts" className='text-white'>Contacts</Navbar.Link>
+        <Navbar.Link href="/menu" className='text-black'>Menu</Navbar.Link>
+        <Navbar.Link href="/about" className='text-black'>About</Navbar.Link>
+        <Navbar.Link href="/reservation" className='text-black'>Reservation</Navbar.Link>
+        <Navbar.Link href="/gallery" className='text-black'>Gallery</Navbar.Link>
+        <Navbar.Link href="/contacts" className='text-black'>Contacts</Navbar.Link>
 
       </Navbar.Collapse>
     </Navbar>
